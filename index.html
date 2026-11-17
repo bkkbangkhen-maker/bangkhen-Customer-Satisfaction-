@@ -123,7 +123,7 @@
                 <input type="date" id="surveyDate" required class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-land-700 focus:border-land-700 outline-none transition-all bg-slate-50">
             </div>
 
-            <!-- Question 1: Department & Service Counter -->
+            <!-- Question 1: Department, Service Counter & Surveyor -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
                 <div>
                     <h3 class="text-sm sm:text-base font-bold text-slate-800 mb-1">
@@ -149,6 +149,21 @@
                     <label for="counterSelect" class="block text-xs font-semibold text-slate-700 mb-1.5">ขั้นตอนที่ 2: เลือกช่องบริการ</label>
                     <select id="counterSelect" onchange="onCounterChange()" required class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-land-700 focus:border-land-700 outline-none bg-white font-medium text-slate-800">
                         <option value="">-- กรุณาเลือกช่องบริการ --</option>
+                    </select>
+                </div>
+
+                <!-- Step 3: Select Surveyor (Only for Survey Department / Counter 15) -->
+                <div id="surveyorSelectionContainer" class="hidden pt-2 border-t border-slate-100">
+                    <label for="surveyorSelect" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                        ขั้นตอนที่ 3: เลือกช่างรังวัดที่ให้บริการ <span class="text-red-500">*</span>
+                    </label>
+                    <select id="surveyorSelect" onchange="onSurveyorChange()" class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-land-700 focus:border-land-700 outline-none bg-white font-medium text-slate-800">
+                        <option value="">-- กรุณาเลือกชื่อช่างรังวัด --</option>
+                        <option value="นายอภิเดช พงษ์พันธุ์">1. นายอภิเดช พงษ์พันธุ์</option>
+                        <option value="นางธัญพร นิลสุวรรณ์">2. นางธัญพร นิลสุวรรณ์</option>
+                        <option value="นายนราธิป มัดทะปะนัง">3. นายนราธิป มัดทะปะนัง</option>
+                        <option value="นางสาวไอลดา จันทร์จำรุญ">4. นางสาวไอลดา จันทร์จำรุญ</option>
+                        <option value="นายครรชิต คำทะเนตร">5. นายครรชิต คำทะเนตร</option>
                     </select>
                 </div>
 
@@ -270,7 +285,7 @@
                 <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider"><i class="fa-solid fa-filter mr-1.5 text-land-700"></i>ตัวกรองข้อมูลรายงาน</h3>
                 <button onclick="resetFilters()" class="text-xs text-land-700 hover:underline font-medium">รีเซ็ตตัวกรอง</button>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
                 <div>
                     <label class="block text-[11px] font-medium text-slate-500 mb-1">ฝ่ายงาน</label>
                     <select id="filterDept" onchange="renderDashboard()" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-slate-50 outline-none"></select>
@@ -278,6 +293,10 @@
                 <div>
                     <label class="block text-[11px] font-medium text-slate-500 mb-1">ช่องบริการ</label>
                     <select id="filterCounter" onchange="renderDashboard()" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-slate-50 outline-none"></select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-medium text-slate-500 mb-1">ช่างรังวัด (ช่อง 15)</label>
+                    <select id="filterSurveyor" onchange="renderDashboard()" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-slate-50 outline-none"></select>
                 </div>
                 <div>
                     <label class="block text-[11px] font-medium text-slate-500 mb-1">ระดับความพึงพอใจ</label>
@@ -471,13 +490,14 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-600 uppercase">
-                                <th class="px-6 py-3">#</th>
-                                <th class="px-6 py-3">วันที่</th>
-                                <th class="px-6 py-3">ฝ่ายงาน</th>
-                                <th class="px-6 py-3 text-center">ช่องบริการ</th>
-                                <th class="px-6 py-3">ความพึงพอใจ</th>
-                                <th class="px-6 py-3">ข้อเสนอแนะ</th>
-                                <th class="px-6 py-3 text-right no-print">จัดการ</th>
+                                <th class="px-5 py-3">#</th>
+                                <th class="px-5 py-3">วันที่</th>
+                                <th class="px-5 py-3">ฝ่ายงาน</th>
+                                <th class="px-5 py-3 text-center">ช่องบริการ</th>
+                                <th class="px-5 py-3">ช่างรังวัด</th>
+                                <th class="px-5 py-3">ความพึงพอใจ</th>
+                                <th class="px-5 py-3">ข้อเสนอแนะ</th>
+                                <th class="px-5 py-3 text-right no-print">จัดการ</th>
                             </tr>
                         </thead>
                         <tbody id="surveyTableBody" class="divide-y divide-slate-100"></tbody>
@@ -560,7 +580,7 @@
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Responses');
   if (!sheet) {
     sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet('Responses');
-    sheet.appendRow(['ID', 'Timestamp', 'วันที่', 'ฝ่ายงาน', 'ช่องบริการ', 'คะแนน', 'ระดับความพึงพอใจ', 'ข้อเสนอแนะ']);
+    sheet.appendRow(['ID', 'Timestamp', 'วันที่', 'ฝ่ายงาน', 'ช่องบริการ', 'คะแนน', 'ระดับความพึงพอใจ', 'ข้อเสนอแนะ', 'ช่างรังวัด']);
   }
   var data = JSON.parse(e.postData.contents);
   var scoreLabels = {'5':'พอใจมากที่สุด','4':'พอใจมาก','3':'พอใจปานกลาง','2':'พอใจน้อย','1':'พอใจน้อยที่สุด'};
@@ -572,7 +592,8 @@
     data.counter,
     data.score,
     scoreLabels[String(data.score)] || '',
-    data.suggestion || ''
+    data.suggestion || '',
+    data.surveyor || ''
   ]);
   return ContentService.createTextOutput(JSON.stringify({status: 'success'})).setMimeType(ContentService.MimeType.JSON);
 }
@@ -595,7 +616,8 @@ function doGet(e) {
       department: String(rows[i][3]),
       counter: Number(rows[i][4]),
       score: Number(rows[i][5]),
-      suggestion: String(rows[i][7] || '')
+      suggestion: String(rows[i][7] || ''),
+      surveyor: String(rows[i][8] || '')
     });
   }
   return ContentService.createTextOutput(JSON.stringify(result.reverse())).setMimeType(ContentService.MimeType.JSON);
@@ -629,10 +651,18 @@ function doGet(e) {
             { name: 'ฝ่ายการเงิน', range: 'ช่องบริการที่ 16' },
             { name: 'ฝ่ายอำนวยการ', range: 'ช่องบริการที่ 17' }
         ];
+        const SURVEYORS = [
+            'นายอภิเดช พงษ์พันธุ์',
+            'นางธัญพร นิลสุวรรณ์',
+            'นายนราธิป มัดทะปะนัง',
+            'นางสาวไอลดา จันทร์จำรุญ',
+            'นายครรชิต คำทะเนตร'
+        ];
 
         // Application State
         let selectedDepartment = null;
         let selectedCounter = null;
+        let selectedSurveyor = '';
         let selectedScore = null;
         let surveyResponses = [];
         let googleScriptUrl = localStorage.getItem('bangkhen_google_script_url') || DEFAULT_GOOGLE_SCRIPT_URL;
@@ -673,6 +703,7 @@ function doGet(e) {
                     const deptSelect = document.getElementById('departmentSelect');
                     if (deptSelect) deptSelect.value = selectedDepartment;
                     renderCounterDropdowns();
+                    updateSurveyorSectionVisibility();
                     updateSummaryDisplay();
                 }
             }
@@ -814,11 +845,29 @@ function doGet(e) {
                 counterContainer.classList.add('hidden');
                 selectedCounter = null;
             }
+            updateSurveyorSectionVisibility();
             updateSubmitButtonState();
+        }
+
+        function updateSurveyorSectionVisibility() {
+            const surveyorContainer = document.getElementById('surveyorSelectionContainer');
+            const surveyorSelect = document.getElementById('surveyorSelect');
+            if (!surveyorContainer || !surveyorSelect) return;
+
+            if (selectedDepartment === 'ฝ่ายรังวัด' && selectedCounter === 15) {
+                surveyorContainer.classList.remove('hidden');
+                surveyorSelect.setAttribute('required', 'required');
+            } else {
+                surveyorContainer.classList.add('hidden');
+                surveyorSelect.removeAttribute('required');
+                surveyorSelect.value = '';
+                selectedSurveyor = '';
+            }
         }
 
         function onDepartmentChange() {
             selectedCounter = null;
+            selectedSurveyor = '';
             renderCounterDropdowns();
             updateSummaryDisplay();
         }
@@ -828,6 +877,14 @@ function doGet(e) {
             if (counterSelect) {
                 selectedCounter = counterSelect.value ? parseInt(counterSelect.value, 10) : null;
             }
+            updateSurveyorSectionVisibility();
+            updateSubmitButtonState();
+            updateSummaryDisplay();
+        }
+
+        function onSurveyorChange() {
+            const surveyorSelect = document.getElementById('surveyorSelect');
+            selectedSurveyor = surveyorSelect ? surveyorSelect.value : '';
             updateSubmitButtonState();
             updateSummaryDisplay();
         }
@@ -849,7 +906,10 @@ function doGet(e) {
         function updateSubmitButtonState() {
             const submitBtn = document.getElementById('submitSurveyBtn');
             if (!submitBtn) return;
-            if (selectedDepartment && selectedCounter && selectedScore !== null) {
+
+            const isSurveyorValid = !(selectedDepartment === 'ฝ่ายรังวัด' && selectedCounter === 15) || (selectedSurveyor !== '');
+
+            if (selectedDepartment && selectedCounter && isSurveyorValid && selectedScore !== null) {
                 submitBtn.disabled = false;
                 submitBtn.className = 'w-full py-4 px-6 bg-gradient-to-r from-land-700 to-land-900 hover:from-land-800 hover:to-black text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 cursor-pointer';
             } else {
@@ -865,7 +925,11 @@ function doGet(e) {
 
             if (selectedDepartment && selectedCounter) {
                 summaryBox.classList.remove('hidden');
-                summaryText.textContent = `${selectedDepartment} > ช่องบริการที่ ${selectedCounter}`;
+                if (selectedDepartment === 'ฝ่ายรังวัด' && selectedCounter === 15 && selectedSurveyor) {
+                    summaryText.textContent = `${selectedDepartment} > ช่องบริการที่ ${selectedCounter} (ช่างรังวัด: ${selectedSurveyor})`;
+                } else {
+                    summaryText.textContent = `${selectedDepartment} > ช่องบริการที่ ${selectedCounter}`;
+                }
             } else {
                 summaryBox.classList.add('hidden');
             }
@@ -873,8 +937,9 @@ function doGet(e) {
 
         function submitSurvey(e) {
             e.preventDefault();
-            if (!selectedDepartment || !selectedCounter || selectedScore === null) {
-                showToast('ข้อมูลไม่ครบถ้วน', 'กรุณาเลือกฝ่ายงาน ช่องบริการ และระดับความพึงพอใจ', 'error');
+            const isSurveyorRequired = (selectedDepartment === 'ฝ่ายรังวัด' && selectedCounter === 15);
+            if (!selectedDepartment || !selectedCounter || (isSurveyorRequired && !selectedSurveyor) || selectedScore === null) {
+                showToast('ข้อมูลไม่ครบถ้วน', isSurveyorRequired && !selectedSurveyor ? 'กรุณาเลือกชื่อช่างรังวัดที่ให้บริการ' : 'กรุณาเลือกฝ่ายงาน ช่องบริการ และระดับความพึงพอใจ', 'error');
                 return;
             }
 
@@ -889,6 +954,7 @@ function doGet(e) {
                 date: surveyDate,
                 department: selectedDepartment,
                 counter: selectedCounter,
+                surveyor: isSurveyorRequired ? selectedSurveyor : '',
                 score: selectedScore,
                 suggestion: suggestion
             };
@@ -907,6 +973,7 @@ function doGet(e) {
         function resetSurveyForm() {
             selectedDepartment = null;
             selectedCounter = null;
+            selectedSurveyor = '';
             selectedScore = null;
 
             const deptSelect = document.getElementById('departmentSelect');
@@ -914,6 +981,15 @@ function doGet(e) {
 
             const counterContainer = document.getElementById('counterSelectionContainer');
             if (counterContainer) counterContainer.classList.add('hidden');
+
+            const surveyorContainer = document.getElementById('surveyorSelectionContainer');
+            if (surveyorContainer) surveyorContainer.classList.add('hidden');
+
+            const surveyorSelect = document.getElementById('surveyorSelect');
+            if (surveyorSelect) {
+                surveyorSelect.removeAttribute('required');
+                surveyorSelect.value = '';
+            }
 
             const buttons = document.querySelectorAll('.score-btn');
             buttons.forEach(btn => {
@@ -939,7 +1015,8 @@ function doGet(e) {
                 else if (record.score === 2) scoreText = 'พอใจน้อย';
                 else if (record.score === 1) scoreText = 'พอใจน้อยที่สุด';
 
-                text.innerHTML = `บันทึกข้อมูลเรียบร้อยแล้ว<br><span class="font-semibold text-land-700">${record.department} (ช่อง ${record.counter})</span><br>ระดับความพึงพอใจ: <span class="text-gold-600 font-bold">${scoreText}</span>`;
+                const surveyorLine = record.surveyor ? `<br>ช่างรังวัด: <span class="font-semibold text-slate-800">${record.surveyor}</span>` : '';
+                text.innerHTML = `บันทึกข้อมูลเรียบร้อยแล้ว<br><span class="font-semibold text-land-700">${record.department} (ช่อง ${record.counter})</span>${surveyorLine}<br>ระดับความพึงพอใจ: <span class="text-gold-600 font-bold">${scoreText}</span>`;
             }
             if (modal) {
                 modal.classList.remove('hidden');
@@ -1004,7 +1081,13 @@ function doGet(e) {
                     const map = new Map();
                     surveyResponses.forEach(item => map.set(item.id, item));
                     cloudData.forEach(item => {
-                        if (item && item.id) map.set(item.id, item);
+                        if (item && item.id) {
+                            const existing = map.get(item.id);
+                            map.set(item.id, {
+                                ...item,
+                                surveyor: item.surveyor || (existing ? existing.surveyor : '')
+                            });
+                        }
                     });
                     surveyResponses = Array.from(map.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                     saveResponsesToStorage();
@@ -1057,10 +1140,12 @@ function doGet(e) {
         function populateFilterDropdowns() {
             const filterDept = document.getElementById('filterDept');
             const filterCounter = document.getElementById('filterCounter');
+            const filterSurveyor = document.getElementById('filterSurveyor');
             if (!filterDept || !filterCounter) return;
 
             const currentDept = filterDept.value;
             const currentCounter = filterCounter.value;
+            const currentSurveyor = filterSurveyor ? filterSurveyor.value : '';
 
             filterDept.innerHTML = '<option value="">ทุกฝ่ายงาน</option>';
             DEPARTMENTS.forEach(dept => {
@@ -1079,17 +1164,30 @@ function doGet(e) {
                 if (currentCounter === String(i)) opt.selected = true;
                 filterCounter.appendChild(opt);
             }
+
+            if (filterSurveyor) {
+                filterSurveyor.innerHTML = '<option value="">ช่างรังวัดทั้งหมด</option>';
+                SURVEYORS.forEach(name => {
+                    const opt = document.createElement('option');
+                    opt.value = name;
+                    opt.textContent = name;
+                    if (currentSurveyor === name) opt.selected = true;
+                    filterSurveyor.appendChild(opt);
+                });
+            }
         }
 
         function renderDashboard() {
             const filterDept = document.getElementById('filterDept');
             const filterCounter = document.getElementById('filterCounter');
+            const filterSurveyor = document.getElementById('filterSurveyor');
             const filterScore = document.getElementById('filterScore');
             const filterDateFrom = document.getElementById('filterDateFrom');
             const filterDateTo = document.getElementById('filterDateTo');
 
             const deptVal = filterDept ? filterDept.value : '';
             const counterVal = filterCounter ? filterCounter.value : '';
+            const surveyorVal = filterSurveyor ? filterSurveyor.value : '';
             const scoreVal = filterScore ? filterScore.value : '';
             const dateFromVal = filterDateFrom ? filterDateFrom.value : '';
             const dateToVal = filterDateTo ? filterDateTo.value : '';
@@ -1097,6 +1195,7 @@ function doGet(e) {
             let filtered = surveyResponses.filter(item => {
                 if (deptVal && item.department !== deptVal) return false;
                 if (counterVal && String(item.counter) !== counterVal) return false;
+                if (surveyorVal && item.surveyor !== surveyorVal) return false;
                 if (scoreVal && String(item.score) !== scoreVal) return false;
                 if (dateFromVal && item.date < dateFromVal) return false;
                 if (dateToVal && item.date > dateToVal) return false;
@@ -1159,12 +1258,14 @@ function doGet(e) {
         function resetFilters() {
             const filterDept = document.getElementById('filterDept');
             const filterCounter = document.getElementById('filterCounter');
+            const filterSurveyor = document.getElementById('filterSurveyor');
             const filterScore = document.getElementById('filterScore');
             const filterDateFrom = document.getElementById('filterDateFrom');
             const filterDateTo = document.getElementById('filterDateTo');
 
             if (filterDept) filterDept.value = '';
             if (filterCounter) filterCounter.value = '';
+            if (filterSurveyor) filterSurveyor.value = '';
             if (filterScore) filterScore.value = '';
             if (filterDateFrom) filterDateFrom.value = '';
             if (filterDateTo) filterDateTo.value = '';
@@ -1255,7 +1356,7 @@ function doGet(e) {
             countSpan.textContent = filtered.length;
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-8 text-center text-slate-400">ไม่พบข้อมูลการประเมินตามเงื่อนไขที่เลือก</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="px-6 py-8 text-center text-slate-400">ไม่พบข้อมูลการประเมินตามเงื่อนไขที่เลือก</td></tr>`;
                 return;
             }
 
@@ -1267,15 +1368,18 @@ function doGet(e) {
                 else if (item.score === 2) scoreBadge = '<span class="px-2.5 py-1 bg-orange-100 text-orange-800 rounded-full text-xs font-semibold">🙁 พอใจน้อย (2)</span>';
                 else if (item.score === 1) scoreBadge = '<span class="px-2.5 py-1 bg-red-100 text-red-800 rounded-full text-xs font-semibold">😡 พอใจน้อยที่สุด (1)</span>';
 
+                const surveyorDisplay = item.surveyor ? `<span class="text-slate-700 font-medium">${escapeHtml(item.surveyor)}</span>` : '<span class="text-slate-300">-</span>';
+
                 return `
                     <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-500">${index + 1}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-700">${item.date}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-xs font-medium text-slate-800">${item.department}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-700 text-center font-bold">ช่อง ${item.counter}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">${scoreBadge}</td>
-                        <td class="px-6 py-4 text-xs text-slate-600 max-w-xs truncate">${item.suggestion ? escapeHtml(item.suggestion) : '<span class="text-slate-300">- ไม่มี -</span>'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-xs no-print">
+                        <td class="px-5 py-4 whitespace-nowrap text-xs text-slate-500">${index + 1}</td>
+                        <td class="px-5 py-4 whitespace-nowrap text-xs text-slate-700">${item.date}</td>
+                        <td class="px-5 py-4 whitespace-nowrap text-xs font-medium text-slate-800">${item.department}</td>
+                        <td class="px-5 py-4 whitespace-nowrap text-xs text-slate-700 text-center font-bold">ช่อง ${item.counter}</td>
+                        <td class="px-5 py-4 whitespace-nowrap text-xs">${surveyorDisplay}</td>
+                        <td class="px-5 py-4 whitespace-nowrap">${scoreBadge}</td>
+                        <td class="px-5 py-4 text-xs text-slate-600 max-w-xs truncate">${item.suggestion ? escapeHtml(item.suggestion) : '<span class="text-slate-300">- ไม่มี -</span>'}</td>
+                        <td class="px-5 py-4 whitespace-nowrap text-right text-xs no-print">
                             <button onclick="deleteRecord('${item.id}')" class="text-red-500 hover:text-red-700 p-1"><i class="fa-solid fa-trash-can"></i></button>
                         </td>
                     </tr>
@@ -1297,7 +1401,7 @@ function doGet(e) {
             container.innerHTML = withSuggestions.map(item => `
                 <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
                     <div class="flex justify-between items-center mb-1">
-                        <span class="text-xs font-bold text-land-800">${item.department} (ช่อง ${item.counter})</span>
+                        <span class="text-xs font-bold text-land-800">${item.department} (ช่อง ${item.counter})${item.surveyor ? ` - ${escapeHtml(item.surveyor)}` : ''}</span>
                         <span class="text-[10px] text-slate-400">${item.date}</span>
                     </div>
                     <p class="text-xs text-slate-700">${escapeHtml(item.suggestion)}</p>
@@ -1349,7 +1453,7 @@ function doGet(e) {
                 return;
             }
 
-            let csvContent = "\uFEFFID,วันที่,ฝ่ายงาน,ช่องบริการ,คะแนน,ระดับความพึงพอใจ,ข้อเสนอแนะ\n";
+            let csvContent = "\uFEFFID,วันที่,ฝ่ายงาน,ช่องบริการ,ช่างรังวัด,คะแนน,ระดับความพึงพอใจ,ข้อเสนอแนะ\n";
             surveyResponses.forEach(item => {
                 let scoreText = '';
                 if (item.score === 5) scoreText = 'พอใจมากที่สุด';
@@ -1358,8 +1462,9 @@ function doGet(e) {
                 else if (item.score === 2) scoreText = 'พอใจน้อย';
                 else if (item.score === 1) scoreText = 'พอใจน้อยที่สุด';
 
+                const escapedSurveyor = `"${(item.surveyor || '').replace(/"/g, '""')}"`;
                 const escapedSuggestion = `"${(item.suggestion || '').replace(/"/g, '""')}"`;
-                csvContent += `${item.id},${item.date},${item.department},${item.counter},${item.score},${scoreText},${escapedSuggestion}\n`;
+                csvContent += `${item.id},${item.date},${item.department},${item.counter},${escapedSurveyor},${item.score},${scoreText},${escapedSuggestion}\n`;
             });
 
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
