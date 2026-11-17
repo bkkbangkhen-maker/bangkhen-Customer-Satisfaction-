@@ -907,7 +907,9 @@ function doGet(e) {
             const submitBtn = document.getElementById('submitSurveyBtn');
             if (!submitBtn) return;
 
-            const isSurveyorValid = !(selectedDepartment === 'ฝ่ายรังวัด' && selectedCounter === 15) || (selectedSurveyor !== '');
+            const surveyorSelect = document.getElementById('surveyorSelect');
+            const currentSurveyor = surveyorSelect ? surveyorSelect.value : selectedSurveyor;
+            const isSurveyorValid = !(selectedDepartment === 'ฝ่ายรังวัด' && selectedCounter === 15) || (currentSurveyor !== '');
 
             if (selectedDepartment && selectedCounter && isSurveyorValid && selectedScore !== null) {
                 submitBtn.disabled = false;
@@ -923,10 +925,13 @@ function doGet(e) {
             const summaryText = document.getElementById('selectedSummaryText');
             if (!summaryBox || !summaryText) return;
 
+            const surveyorSelect = document.getElementById('surveyorSelect');
+            const currentSurveyor = surveyorSelect ? surveyorSelect.value : selectedSurveyor;
+
             if (selectedDepartment && selectedCounter) {
                 summaryBox.classList.remove('hidden');
-                if (selectedDepartment === 'ฝ่ายรังวัด' && selectedCounter === 15 && selectedSurveyor) {
-                    summaryText.textContent = `${selectedDepartment} > ช่องบริการที่ ${selectedCounter} (ช่างรังวัด: ${selectedSurveyor})`;
+                if (selectedDepartment === 'ฝ่ายรังวัด' && selectedCounter === 15 && currentSurveyor) {
+                    summaryText.textContent = `${selectedDepartment} > ช่องบริการที่ ${selectedCounter} (ช่างรังวัด: ${currentSurveyor})`;
                 } else {
                     summaryText.textContent = `${selectedDepartment} > ช่องบริการที่ ${selectedCounter}`;
                 }
@@ -938,8 +943,13 @@ function doGet(e) {
         function submitSurvey(e) {
             e.preventDefault();
             const isSurveyorRequired = (selectedDepartment === 'ฝ่ายรังวัด' && selectedCounter === 15);
-            if (!selectedDepartment || !selectedCounter || (isSurveyorRequired && !selectedSurveyor) || selectedScore === null) {
-                showToast('ข้อมูลไม่ครบถ้วน', isSurveyorRequired && !selectedSurveyor ? 'กรุณาเลือกชื่อช่างรังวัดที่ให้บริการ' : 'กรุณาเลือกฝ่ายงาน ช่องบริการ และระดับความพึงพอใจ', 'error');
+            
+            // ดึงค่าจาก select โดยตรงเพื่อความชัวร์ ป้องกันค่าว่าง
+            const surveyorSelect = document.getElementById('surveyorSelect');
+            const currentSurveyor = (isSurveyorRequired && surveyorSelect) ? surveyorSelect.value : '';
+
+            if (!selectedDepartment || !selectedCounter || (isSurveyorRequired && !currentSurveyor) || selectedScore === null) {
+                showToast('ข้อมูลไม่ครบถ้วน', isSurveyorRequired && !currentSurveyor ? 'กรุณาเลือกชื่อช่างรังวัดที่ให้บริการ' : 'กรุณาเลือกฝ่ายงาน ช่องบริการ และระดับความพึงพอใจ', 'error');
                 return;
             }
 
@@ -954,7 +964,7 @@ function doGet(e) {
                 date: surveyDate,
                 department: selectedDepartment,
                 counter: selectedCounter,
-                surveyor: isSurveyorRequired ? selectedSurveyor : '', // ส่งชื่อช่างรังวัดไปด้วย
+                surveyor: currentSurveyor,
                 score: selectedScore,
                 suggestion: suggestion
             };
@@ -1453,7 +1463,8 @@ function doGet(e) {
                 return;
             }
 
-            let csvContent = "\uFEFFID,วันที่,ฝ่ายงาน,ช่องบริการ,ช่างรังวัด,คะแนน,ระดับความพึงพอใจ,ข้อเสนอแนะ\n";
+            let csvContent = "﻿ID,วันที่,ฝ่ายงาน,ช่องบริการ,ช่างรังวัด,คะแนน,ระดับความพึงพอใจ,ข้อเสนอแนะ
+";
             surveyResponses.forEach(item => {
                 let scoreText = '';
                 if (item.score === 5) scoreText = 'พอใจมากที่สุด';
@@ -1464,7 +1475,8 @@ function doGet(e) {
 
                 const escapedSurveyor = `"${(item.surveyor || '').replace(/"/g, '""')}"`;
                 const escapedSuggestion = `"${(item.suggestion || '').replace(/"/g, '""')}"`;
-                csvContent += `${item.id},${item.date},${item.department},${item.counter},${escapedSurveyor},${item.score},${scoreText},${escapedSuggestion}\n`;
+                csvContent += `${item.id},${item.date},${item.department},${item.counter},${escapedSurveyor},${item.score},${scoreText},${escapedSuggestion}
+`;
             });
 
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
