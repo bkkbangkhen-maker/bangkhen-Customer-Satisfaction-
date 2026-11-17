@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบแบบประเมินความพึงพอใจ สำนักงานที่ดินกรุงเทพมหานคร สาขาบางเขน</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Prompt / Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Prompt', 'sans-serif'],
+                    },
+                    colors: {
+                        land: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            700: '#15803d',
+                            800: '#0f4c3a',
+                            900: '#093125',
+                        },
+                        gold: {
+                            50: '#fffbeb',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f8fafc;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background-color: white !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-land-800 selection:text-white">
+
+    <!-- Top Navigation Bar -->
+    <nav class="bg-gradient-to-r from-land-900 via-land-800 to-land-900 text-white shadow-lg sticky top-0 z-40 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center py-3 gap-3">
+                <!-- Brand / Title -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gold-500 flex items-center justify-center text-land-900 font-bold text-xl shadow-inner shrink-0">
+                        <i class="fa-solid fa-landmark"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-sm sm:text-base leading-tight">สำนักงานที่ดินกรุงเทพมหานคร สาขาบางเขน</h1>
+                        <p class="text-[11px] sm:text-xs text-land-100">โครงการยกระดับมาตรฐานการให้บริการ</p>
+                    </div>
+                </div>
+
+                <!-- Mode Switcher -->
+                <div class="flex bg-land-900/80 p-1 rounded-xl border border-land-700/60 w-full md:w-auto">
+                    <button id="btnModeSurvey" onclick="switchMode('survey')" class="flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all bg-gold-500 text-land-900 shadow">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                        <span>แบบประเมินความพึงพอใจ</span>
+                    </button>
+                    <button id="btnModeAdmin" onclick="requestAdminAccess()" class="flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all text-land-100 hover:text-white">
+                        <i class="fa-solid fa-lock"></i>
+                        <span>ระบบรายงานผล (เจ้าหน้าที่)</span>
+                        <span id="navTotalBadge" class="ml-1 px-2 py-0.5 text-[10px] rounded-full bg-land-700 text-white font-bold">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- =================================================================== -->
+    <!-- VIEW 1: CITIZEN SURVEY FORM                                         -->
+    <!-- =================================================================== -->
+    <main id="surveyView" class="max-w-2xl mx-auto px-4 py-6 sm:py-10">
+        <!-- Header Banner -->
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-slate-200 mb-6">
+            <div class="h-3 bg-gradient-to-r from-land-800 via-gold-500 to-land-800"></div>
+            <div class="p-6 sm:p-8 text-center bg-gradient-to-b from-land-50/60 to-white">
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-land-800 text-gold-400 text-2xl mb-4 shadow">
+                    <i class="fa-solid fa-face-smile-beam"></i>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-bold text-land-900 mb-2">แบบประเมินความพึงพอใจ</h2>
+                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    โครงการยกระดับมาตรฐานการให้บริการ<br>
+                    <span class="font-semibold text-land-800">สำนักงานที่ดินกรุงเทพมหานคร สาขาบางเขน</span>
+                </p>
+                <div class="mt-4 inline-block px-3 py-1 rounded-full bg-red-50 text-red-600 text-[11px] font-medium border border-red-100">
+                    * ระบุว่าเป็นคำถามที่จำเป็น
+                </div>
+            </div>
+        </div>
+
+        <!-- Survey Form -->
+        <form id="citizenSurveyForm" onsubmit="submitSurvey(event)" class="space-y-6">
+            
+            <!-- Date Selection Card -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <label for="surveyDate" class="block text-sm font-bold text-slate-800 mb-2">
+                    <i class="fa-regular fa-calendar-days text-land-700 mr-1.5"></i>
+                    วันที่เข้ารับบริการ <span class="text-red-500">*</span>
+                </label>
+                <input type="date" id="surveyDate" required class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-land-700 focus:border-land-700 outline-none transition-all bg-slate-50">
+            </div>
+
+            <!-- Question 1: Department & Service Counter -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                <div>
+                    <h3 class="text-sm sm:text-base font-bold text-slate-800 mb-1">
+                        1. ท่านเข้ารับบริการ ณ ฝ่ายงาน และช่องบริการที่ <span class="text-red-500">*</span>
+                    </h3>
+                    <p class="text-xs text-slate-500">กรุณาเลือกฝ่ายงานที่ติดต่อก่อน แล้วจึงเลือกหมายเลขช่องบริการ</p>
+                </div>
+
+                <!-- Step 1: Select Department -->
+                <div>
+                    <label for="departmentSelect" class="block text-xs font-semibold text-slate-700 mb-1.5">ขั้นตอนที่ 1: เลือกฝ่ายงาน</label>
+                    <select id="departmentSelect" onchange="onDepartmentChange()" required class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-land-700 focus:border-land-700 outline-none bg-white font-medium text-slate-800">
+                        <option value="">-- กรุณาเลือกฝ่ายงาน --</option>
+                        <option value="ฝ่ายทะเบียน">ฝ่ายทะเบียน (ช่องบริการที่ 1 - 14)</option>
+                        <option value="ฝ่ายรังวัด">ฝ่ายรังวัด (ช่องบริการที่ 15)</option>
+                        <option value="ฝ่ายการเงิน">ฝ่ายการเงิน (ช่องบริการที่ 16)</option>
+                        <option value="ฝ่ายอำนวยการ">ฝ่ายอำนวยการ (ช่องบริการที่ 17)</option>
+                    </select>
+                </div>
+
+                <!-- Step 2: Select Counter (Dependent Dropdown) -->
+                <div id="counterSelectionContainer" class="hidden pt-2 border-t border-slate-100">
+                    <label for="counterSelect" class="block text-xs font-semibold text-slate-700 mb-1.5">ขั้นตอนที่ 2: เลือกช่องบริการ</label>
+                    <select id="counterSelect" onchange="onCounterChange()" required class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-land-700 focus:border-land-700 outline-none bg-white font-medium text-slate-800">
+                        <option value="">-- กรุณาเลือกช่องบริการ --</option>
+                    </select>
+                </div>
+
+                <!-- Selected Badge -->
+                <div id="selectedSummaryBox" class="hidden p-3 rounded-xl bg-land-50 border border-land-200 flex items-center gap-2 text-xs text-land-800">
+                    <i class="fa-solid fa-circle-check text-land-600 text-base"></i>
+                    <span>คุณกำลังประเมิน: <strong id="selectedSummaryText"></strong></span>
+                </div>
+            </div>
+
+            <!-- Question 2: Satisfaction Rating -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="text-sm sm:text-base font-bold text-slate-800 mb-1">
+                    2. ท่านมีความพึงพอใจกระบวนการและคุณภาพของงานบริการ ในระดับใด <span class="text-red-500">*</span>
+                </h3>
+                <p class="text-xs text-slate-500 mb-5">แตะที่ไอคอนเพื่อเลือกระดับความพึงพอใจของท่าน</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                    <!-- Score 5 -->
+                    <button type="button" onclick="selectScore(5)" data-score="5" class="score-btn flex sm:flex-col items-center justify-between sm:justify-center p-3.5 rounded-2xl border-2 border-slate-200 hover:border-emerald-400 bg-white transition-all cursor-pointer group">
+                        <div class="flex items-center sm:flex-col gap-3 sm:gap-2">
+                            <span class="text-3xl sm:text-4xl group-hover:scale-110 transition-transform">😄</span>
+                            <span class="text-xs sm:text-[11px] font-bold text-slate-700 text-center">พอใจมากที่สุด</span>
+                        </div>
+                        <span class="sm:hidden text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">5 คะแนน</span>
+                    </button>
+
+                    <!-- Score 4 -->
+                    <button type="button" onclick="selectScore(4)" data-score="4" class="score-btn flex sm:flex-col items-center justify-between sm:justify-center p-3.5 rounded-2xl border-2 border-slate-200 hover:border-blue-400 bg-white transition-all cursor-pointer group">
+                        <div class="flex items-center sm:flex-col gap-3 sm:gap-2">
+                            <span class="text-3xl sm:text-4xl group-hover:scale-110 transition-transform">🙂</span>
+                            <span class="text-xs sm:text-[11px] font-bold text-slate-700 text-center">พอใจมาก</span>
+                        </div>
+                        <span class="sm:hidden text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">4 คะแนน</span>
+                    </button>
+
+                    <!-- Score 3 -->
+                    <button type="button" onclick="selectScore(3)" data-score="3" class="score-btn flex sm:flex-col items-center justify-between sm:justify-center p-3.5 rounded-2xl border-2 border-slate-200 hover:border-amber-400 bg-white transition-all cursor-pointer group">
+                        <div class="flex items-center sm:flex-col gap-3 sm:gap-2">
+                            <span class="text-3xl sm:text-4xl group-hover:scale-110 transition-transform">😐</span>
+                            <span class="text-xs sm:text-[11px] font-bold text-slate-700 text-center">พอใจปานกลาง</span>
+                        </div>
+                        <span class="sm:hidden text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">3 คะแนน</span>
+                    </button>
+
+                    <!-- Score 2 -->
+                    <button type="button" onclick="selectScore(2)" data-score="2" class="score-btn flex sm:flex-col items-center justify-between sm:justify-center p-3.5 rounded-2xl border-2 border-slate-200 hover:border-orange-400 bg-white transition-all cursor-pointer group">
+                        <div class="flex items-center sm:flex-col gap-3 sm:gap-2">
+                            <span class="text-3xl sm:text-4xl group-hover:scale-110 transition-transform">🙁</span>
+                            <span class="text-xs sm:text-[11px] font-bold text-slate-700 text-center">พอใจน้อย</span>
+                        </div>
+                        <span class="sm:hidden text-xs font-bold text-orange-600 bg-orange-50 px-2.5 py-1 rounded-full">2 คะแนน</span>
+                    </button>
+
+                    <!-- Score 1 -->
+                    <button type="button" onclick="selectScore(1)" data-score="1" class="score-btn flex sm:flex-col items-center justify-between sm:justify-center p-3.5 rounded-2xl border-2 border-slate-200 hover:border-red-400 bg-white transition-all cursor-pointer group">
+                        <div class="flex items-center sm:flex-col gap-3 sm:gap-2">
+                            <span class="text-3xl sm:text-4xl group-hover:scale-110 transition-transform">😡</span>
+                            <span class="text-xs sm:text-[11px] font-bold text-slate-700 text-center">พอใจน้อยที่สุด</span>
+                        </div>
+                        <span class="sm:hidden text-xs font-bold text-red-600 bg-red-50 px-2.5 py-1 rounded-full">1 คะแนน</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Question 3: Additional Suggestions -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <label for="surveySuggestion" class="block text-sm font-bold text-slate-800 mb-1">
+                    3. ข้อเสนอแนะเพิ่มเติม (ถ้ามี)
+                </label>
+                <p class="text-xs text-slate-500 mb-3">ความคิดเห็นของท่านจะถูกนำไปปรับปรุงการให้บริการของสำนักงานที่ดินสาขาบางเขน</p>
+                <textarea id="surveySuggestion" rows="3" placeholder="พิมพ์ข้อเสนอแนะหรือคำชมเชยที่นี่..." class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-land-700 focus:border-land-700 outline-none transition-all"></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="submitSurveyBtn" disabled class="w-full py-4 px-6 bg-slate-300 text-slate-500 font-bold rounded-xl cursor-not-allowed shadow-inner">
+                ส่งแบบประเมินความพึงพอใจ
+            </button>
+        </form>
+    </main>
+
+    <!-- =================================================================== -->
+    <!-- VIEW 2: ADMIN DASHBOARD & ANALYTICS (STAFF ONLY)                    -->
+    <!-- =================================================================== -->
+    <main id="adminView" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+        
+        <!-- Header & Action Buttons -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 bg-land-100 text-land-800 text-xs font-bold rounded-full">ฝั่งเจ้าหน้าที่</span>
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-800">ระบบรายงานผลและสถิติความพึงพอใจ</h2>
+                </div>
+                <p class="text-xs text-slate-500 mt-1">ข้อมูลอ้างอิงจากการส่งแบบประเมินจริงของประชาชน สำนักงานที่ดินกรุงเทพมหานคร สาขาบางเขน</p>
+            </div>
+            <div class="flex flex-wrap gap-2 w-full md:w-auto no-print">
+                <button onclick="exportToCSV()" class="flex-1 md:flex-initial px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-file-csv"></i>
+                    <span>ส่งออก CSV</span>
+                </button>
+                <button onclick="printReport()" class="flex-1 md:flex-initial px-4 py-2.5 bg-slate-700 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-print"></i>
+                    <span>พิมพ์รายงาน</span>
+                </button>
+                <button onclick="fetchFromGoogleSheets()" class="flex-1 md:flex-initial px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate"></i>
+                    <span>ดึงข้อมูลจาก Google Sheets</span>
+                </button>
+                <button onclick="confirmClearAllData()" class="flex-1 md:flex-initial px-4 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-trash-can"></i>
+                    <span>ล้างข้อมูล</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Filters Card -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 no-print">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider"><i class="fa-solid fa-filter mr-1.5 text-land-700"></i>ตัวกรองข้อมูลรายงาน</h3>
+                <button onclick="resetFilters()" class="text-xs text-land-700 hover:underline font-medium">รีเซ็ตตัวกรอง</button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                <div>
+                    <label class="block text-[11px] font-medium text-slate-500 mb-1">ฝ่ายงาน</label>
+                    <select id="filterDept" onchange="renderDashboard()" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-slate-50 outline-none"></select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-medium text-slate-500 mb-1">ช่องบริการ</label>
+                    <select id="filterCounter" onchange="renderDashboard()" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-slate-50 outline-none"></select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-medium text-slate-500 mb-1">ระดับความพึงพอใจ</label>
+                    <select id="filterScore" onchange="renderDashboard()" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-slate-50 outline-none">
+                        <option value="">ทุกระดับ</option>
+                        <option value="5">😄 พอใจมากที่สุด (5)</option>
+                        <option value="4">🙂 พอใจมาก (4)</option>
+                        <option value="3">😐 พอใจปานกลาง (3)</option>
+                        <option value="2">🙁 พอใจน้อย (2)</option>
+                        <option value="1">😡 พอใจน้อยที่สุด (1)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-medium text-slate-500 mb-1">ตั้งแต่วันที่</label>
+                    <input type="date" id="filterDateFrom" onchange="renderDashboard()" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-slate-50 outline-none">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-medium text-slate-500 mb-1">ถึงวันที่</label>
+                    <input type="date" id="filterDateTo" onchange="renderDashboard()" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-slate-50 outline-none">
+                </div>
+            </div>
+        </div>
+
+        <!-- Top KPI Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-500">ผู้ตอบแบบประเมินทั้งหมด</p>
+                    <h3 id="statTotalCount" class="text-3xl font-bold text-slate-800 mt-1">0</h3>
+                    <p class="text-[11px] text-slate-400 mt-1">รายการประเมินจริงในระบบ</p>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-land-50 text-land-700 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-500">คะแนนความพึงพอใจเฉลี่ย</p>
+                    <div class="flex items-baseline gap-1 mt-1">
+                        <h3 id="statAvgScore" class="text-3xl font-bold text-gold-600">0.00</h3>
+                        <span class="text-xs text-slate-400">/ 5.00</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1">เกณฑ์มาตรฐานการให้บริการ</p>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-gold-50 text-gold-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-star"></i>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-500">สัดส่วน "พอใจมากที่สุด"</p>
+                    <h3 id="statSatisfactionPct" class="text-3xl font-bold text-emerald-600 mt-1">0%</h3>
+                    <p class="text-[11px] text-slate-400 mt-1">ระดับ 5 คะแนน</p>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-face-laugh-beam"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4 Departments Summary Grid -->
+        <div>
+            <h3 class="text-sm font-bold text-slate-800 mb-3">สรุปผลแยกตามฝ่ายงาน (4 ฝ่ายงาน)</h3>
+            <div id="deptCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="text-sm font-bold text-slate-800 mb-4">สัดส่วนระดับความพึงพอใจ (1 - 5 คะแนน)</h3>
+                <div class="h-64">
+                    <canvas id="satisfactionChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="text-sm font-bold text-slate-800 mb-4">คะแนนเฉลี่ยรายช่องบริการ (ช่องที่ 1 - 17)</h3>
+                <div class="h-64">
+                    <canvas id="counterChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Tools: Google Sheets Sync & QR Code Generator -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 no-print">
+            <!-- Google Sheets Integration -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                        <i class="fa-solid fa-table"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800">เชื่อมต่อฐานข้อมูล Google Sheets</h3>
+                        <p class="text-[11px] text-slate-500">ส่งข้อมูลการประเมินไปยัง Google Sheet อัตโนมัติแบบ Real-time</p>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Google Apps Script Web App URL</label>
+                    <div class="flex gap-2">
+                        <input type="url" id="googleScriptUrlInput" placeholder="https://script.google.com/macros/s/..." class="flex-1 px-3 py-2 rounded-xl border border-slate-300 text-xs outline-none focus:border-land-700">
+                        <button onclick="saveGoogleScriptUrl()" class="px-4 py-2 bg-land-800 hover:bg-land-900 text-white text-xs font-semibold rounded-xl transition-all">บันทึก</button>
+                        <button onclick="openAppsScriptGuideModal()" class="px-3 py-2 bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs font-semibold rounded-xl transition-all flex items-center gap-1" title="ดูวิธีเชื่อมต่อและคัดลอกโค้ด">
+                            <i class="fa-solid fa-book"></i>
+                            <span>คู่มือ/โค้ด</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-[11px] text-slate-600 space-y-1">
+                    <p class="font-semibold text-slate-700"><i class="fa-solid fa-circle-info text-land-700 mr-1"></i>สถานะการจัดเก็บข้อมูล (2-Way Sync):</p>
+                    <p>• บันทึกข้อมูลลงในเว็บ (Local Storage) และส่งไปยัง Google Sheets ทันทีเมื่อประชาชนกดส่ง</p>
+                    <p>• กดปุ่ม <strong>"ดึงข้อมูลจาก Google Sheets"</strong> ด้านบนเพื่อซิงก์ข้อมูลจากทุกเครื่องมารวมแสดงผลบนเว็บ</p>
+                </div>
+            </div>
+
+            <!-- QR Code Generator per Counter -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row items-center gap-6">
+                <div class="flex-1 space-y-3 w-full">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-xl bg-land-100 text-land-800 flex items-center justify-center">
+                            <i class="fa-solid fa-qrcode"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-800">สร้างป้าย QR Code ประจำช่องบริการ</h3>
+                            <p class="text-[11px] text-slate-500">เลือกช่องบริการเพื่อสร้าง QR Code ติดหน้าเคาน์เตอร์</p>
+                        </div>
+                    </div>
+                    <select id="qrCounterSelect" onchange="updateQrGenerator()" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-xs bg-slate-50 outline-none">
+                        <option value="">-- เลือกช่องบริการ (1 - 17) --</option>
+                        <optgroup label="ฝ่ายทะเบียน (ช่อง 1 - 14)">
+                            <option value="1">ช่องบริการที่ 1</option>
+                            <option value="2">ช่องบริการที่ 2</option>
+                            <option value="3">ช่องบริการที่ 3</option>
+                            <option value="4">ช่องบริการที่ 4</option>
+                            <option value="5">ช่องบริการที่ 5</option>
+                            <option value="6">ช่องบริการที่ 6</option>
+                            <option value="7">ช่องบริการที่ 7</option>
+                            <option value="8">ช่องบริการที่ 8</option>
+                            <option value="9">ช่องบริการที่ 9</option>
+                            <option value="10">ช่องบริการที่ 10</option>
+                            <option value="11">ช่องบริการที่ 11</option>
+                            <option value="12">ช่องบริการที่ 12</option>
+                            <option value="13">ช่องบริการที่ 13</option>
+                            <option value="14">ช่องบริการที่ 14</option>
+                        </optgroup>
+                        <optgroup label="ฝ่ายรังวัด">
+                            <option value="15">ช่องบริการที่ 15 (ฝ่ายรังวัด)</option>
+                        </optgroup>
+                        <optgroup label="ฝ่ายการเงิน">
+                            <option value="16">ช่องบริการที่ 16 (ฝ่ายการเงิน)</option>
+                        </optgroup>
+                        <optgroup label="ฝ่ายอำนวยการ">
+                            <option value="17">ช่องบริการที่ 17 (ฝ่ายอำนวยการ)</option>
+                        </optgroup>
+                    </select>
+                    <button onclick="downloadQrCode()" class="w-full py-2.5 bg-gold-500 hover:bg-gold-600 text-land-900 text-xs font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-download"></i>
+                        <span>ดาวน์โหลดภาพ QR Code (.PNG)</span>
+                    </button>
+                </div>
+
+                <!-- QR Preview Box -->
+                <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-2xl flex flex-col items-center justify-center min-w-[210px] text-center">
+                    <div id="qrCodeContainer" class="bg-white p-2 rounded-xl shadow-sm flex items-center justify-center">
+                        <div class="text-slate-400 text-xs py-8 px-4">กรุณาเลือกช่องบริการ<br>เพื่อสร้าง QR Code</div>
+                    </div>
+                    <p id="qrCounterTitle" class="text-xs font-bold text-land-800 mt-2">เลือกช่องบริการ</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Suggestions & Recent Records -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Suggestions List -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-1">
+                <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-comment-dots text-gold-500"></i>
+                    <span>ข้อเสนอแนะจากผู้รับบริการ</span>
+                </h3>
+                <div id="suggestionsContainer" class="space-y-3 max-h-96 overflow-y-auto pr-1"></div>
+            </div>
+
+            <!-- Detailed Table -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 lg:col-span-2 overflow-hidden flex flex-col">
+                <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                    <h3 class="text-sm font-bold text-slate-800">ประวัติการส่งแบบประเมินทั้งหมด</h3>
+                    <span class="text-xs text-slate-500">พบ <strong id="tableRecordCount" class="text-land-800">0</strong> รายการ</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-600 uppercase">
+                                <th class="px-6 py-3">#</th>
+                                <th class="px-6 py-3">วันที่</th>
+                                <th class="px-6 py-3">ฝ่ายงาน</th>
+                                <th class="px-6 py-3 text-center">ช่องบริการ</th>
+                                <th class="px-6 py-3">ความพึงพอใจ</th>
+                                <th class="px-6 py-3">ข้อเสนอแนะ</th>
+                                <th class="px-6 py-3 text-right no-print">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="surveyTableBody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- =================================================================== -->
+    <!-- MODALS                                                              -->
+    <!-- =================================================================== -->
+
+    <!-- Admin Login Modal (@bangkhen) -->
+    <div id="adminLoginModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200">
+            <div class="text-center mb-5">
+                <div class="w-12 h-12 rounded-2xl bg-land-100 text-land-800 flex items-center justify-center text-xl mx-auto mb-3">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800">ยืนยันตัวตนเจ้าหน้าที่</h3>
+                <p class="text-xs text-slate-500 mt-1">กรุณากรอกรหัสผ่านเพื่อเข้าสู่ระบบรายงานผล</p>
+            </div>
+            <form onsubmit="verifyAdminPassword(event)" class="space-y-4">
+                <div>
+                    <input type="password" id="adminPasswordInput" placeholder="กรอกรหัสผ่านเจ้าหน้าที่" required class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm text-center tracking-widest focus:ring-2 focus:ring-land-700 focus:border-land-700 outline-none">
+                </div>
+                <div class="flex gap-2">
+                    <button type="button" onclick="closeAdminLoginModal()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all">ยกเลิก</button>
+                    <button type="submit" class="flex-1 py-2.5 bg-land-800 hover:bg-land-900 text-white text-xs font-bold rounded-xl shadow transition-all">เข้าสู่ระบบ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Survey Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl border border-slate-200">
+            <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl mx-auto mb-4">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 mb-2">ขอขอบคุณสำหรับความคิดเห็น</h3>
+            <p id="successModalText" class="text-xs text-slate-600 leading-relaxed mb-6"></p>
+            <button onclick="closeSuccessModal()" class="w-full py-3 bg-land-800 hover:bg-land-900 text-white text-xs font-bold rounded-xl shadow transition-all">
+                เสร็จสิ้น
+            </button>
+        </div>
+    </div>
+
+    <!-- Clear All Data Confirmation Modal -->
+    <div id="clearDataConfirmModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl border border-slate-200">
+            <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xl mx-auto mb-3">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-800 mb-1">ยืนยันการล้างข้อมูลทั้งหมด?</h3>
+            <p class="text-xs text-slate-500 mb-5">ข้อมูลการประเมินทั้งหมดในเครื่องนี้จะถูกลบอย่างถาวรและไม่สามารถกู้คืนได้</p>
+            <div class="flex gap-2">
+                <button onclick="closeClearDataModal()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="executeClearAllData()" class="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl shadow">ยืนยันลบข้อมูล</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Apps Script Guide Modal -->
+    <div id="appsScriptGuideModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
+                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-code text-land-700"></i>
+                    <span>โค้ดสำหรับเชื่อมต่อ Google Sheets (Apps Script)</span>
+                </h3>
+                <button onclick="closeAppsScriptGuideModal()" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="space-y-3 text-xs text-slate-600">
+                <p>1. สร้างไฟล์ <strong>Google Sheets</strong> ใหม่ ตั้งชื่อชีตด้านล่างว่า <code class="bg-slate-100 px-1.5 py-0.5 rounded font-bold text-slate-800">Responses</code></p>
+                <p>2. ไปที่เมนู <strong>ส่วนขยาย (Extensions) &gt; Apps Script</strong> ลบโค้ดเดิมออกแล้ววางโค้ดด้านล่างนี้:</p>
+                <div class="relative">
+                    <pre id="appsScriptCodeBlock" class="bg-slate-900 text-emerald-400 p-4 rounded-xl text-[11px] overflow-x-auto leading-relaxed font-mono">function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Responses');
+  if (!sheet) {
+    sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet('Responses');
+    sheet.appendRow(['ID', 'Timestamp', 'วันที่', 'ฝ่ายงาน', 'ช่องบริการ', 'คะแนน', 'ระดับความพึงพอใจ', 'ข้อเสนอแนะ']);
+  }
+  var data = JSON.parse(e.postData.contents);
+  var scoreLabels = {'5':'พอใจมากที่สุด','4':'พอใจมาก','3':'พอใจปานกลาง','2':'พอใจน้อย','1':'พอใจน้อยที่สุด'};
+  sheet.appendRow([
+    data.id,
+    data.timestamp,
+    data.date,
+    data.department,
+    data.counter,
+    data.score,
+    scoreLabels[String(data.score)] || '',
+    data.suggestion || ''
+  ]);
+  return ContentService.createTextOutput(JSON.stringify({status: 'success'})).setMimeType(ContentService.MimeType.JSON);
+}
+
+function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Responses');
+  if (!sheet) return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);
+  var rows = sheet.getDataRange().getValues();
+  var result = [];
+  for (var i = 1; i &lt; rows.length; i++) {
+    if (!rows[i][0]) continue;
+    var dateVal = rows[i][2];
+    if (dateVal instanceof Date) {
+      dateVal = Utilities.formatDate(dateVal, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+    }
+    result.push({
+      id: String(rows[i][0]),
+      timestamp: String(rows[i][1]),
+      date: String(dateVal),
+      department: String(rows[i][3]),
+      counter: Number(rows[i][4]),
+      score: Number(rows[i][5]),
+      suggestion: String(rows[i][7] || '')
+    });
+  }
+  return ContentService.createTextOutput(JSON.stringify(result.reverse())).setMimeType(ContentService.MimeType.JSON);
+}</pre>
+                    <button onclick="copyAppsScriptCode()" class="absolute top-2 right-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg text-[11px] backdrop-blur-sm border border-white/20">
+                        <i class="fa-regular fa-copy mr-1"></i>คัดลอกโค้ด
+                    </button>
+                </div>
+                <p>3. กดปุ่ม <strong>ทำให้ใช้งานได้ (Deploy) &gt; การทำให้ใช้งานได้รายการใหม่ (New deployment)</strong></p>
+                <p>4. เลือกประเภทเป็น <strong>เว็บแอป (Web app)</strong> &gt; ตั้งค่าผู้มีสิทธิ์เข้าถึงเป็น <strong>ทุกคน (Anyone)</strong> &gt; กด Deploy และคัดลอก <strong>Web app URL</strong> มาวางในระบบ</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- =================================================================== -->
+    <!-- JAVASCRIPT APPLICATION LOGIC                                        -->
+    <!-- =================================================================== -->
+    <script>
+        // ---------------------------------------------------------------------
+        // 1. CONSTANTS & CONFIGURATION
+        // ---------------------------------------------------------------------
+        const STORAGE_KEY = 'bangkhen_land_survey_responses_v1';
+        const DEFAULT_GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwaELnzc0DHV7BKcZc5BJUAq-dROieHo_xVmrgh4hjiuB78pHaqsf0Be6dHVuxoioWF/exec';
+        const TOTAL_COUNTERS = 17;
+        const DEPARTMENTS = [
+            { name: 'ฝ่ายทะเบียน', range: 'ช่องบริการที่ 1 - 14' },
+            { name: 'ฝ่ายรังวัด', range: 'ช่องบริการที่ 15' },
+            { name: 'ฝ่ายการเงิน', range: 'ช่องบริการที่ 16' },
+            { name: 'ฝ่ายอำนวยการ', range: 'ช่องบริการที่ 17' }
+        ];
+
+        // Application State
+        let selectedDepartment = null;
+        let selectedCounter = null;
+        let selectedScore = null;
+        let surveyResponses = [];
+        let googleScriptUrl = localStorage.getItem('bangkhen_google_script_url') || DEFAULT_GOOGLE_SCRIPT_URL;
+        let satisfactionChartInstance = null;
+        let counterChartInstance = null;
+        let isAdminAuthenticated = false;
+
+        // ---------------------------------------------------------------------
+        // 2. INITIALIZATION & URL PARAMETER HANDLING
+        // ---------------------------------------------------------------------
+        window.addEventListener('DOMContentLoaded', () => {
+            loadResponsesFromStorage();
+            setDefaultDate();
+            checkUrlParameters();
+            renderCounterDropdowns();
+            updateNavBadge();
+
+            const scriptInput = document.getElementById('googleScriptUrlInput');
+            if (scriptInput && googleScriptUrl) {
+                scriptInput.value = googleScriptUrl;
+            }
+            if (googleScriptUrl) {
+                fetchFromGoogleSheets(true);
+            }
+        });
+
+        function checkUrlParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const counterParam = urlParams.get('counter');
+            if (counterParam) {
+                const counterNum = parseInt(counterParam, 10);
+                if (counterNum >= 1 && counterNum <= 17) {
+                    selectedCounter = counterNum;
+                    if (counterNum >= 1 && counterNum <= 14) selectedDepartment = 'ฝ่ายทะเบียน';
+                    else if (counterNum === 15) selectedDepartment = 'ฝ่ายรังวัด';
+                    else if (counterNum === 16) selectedDepartment = 'ฝ่ายการเงิน';
+                    else if (counterNum === 17) selectedDepartment = 'ฝ่ายอำนวยการ';
+
+                    const deptSelect = document.getElementById('departmentSelect');
+                    if (deptSelect) deptSelect.value = selectedDepartment;
+                    renderCounterDropdowns();
+                    updateSummaryDisplay();
+                }
+            }
+        }
+
+        function setDefaultDate() {
+            const dateInput = document.getElementById('surveyDate');
+            if (dateInput) {
+                const today = new Date().toISOString().split('T')[0];
+                dateInput.value = today;
+            }
+        }
+
+        function loadResponsesFromStorage() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEY);
+                surveyResponses = data ? JSON.parse(data) : [];
+            } catch (e) {
+                surveyResponses = [];
+            }
+        }
+
+        function saveResponsesToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(surveyResponses));
+                updateNavBadge();
+            } catch (e) {
+                showToast('เกิดข้อผิดพลาด', 'ไม่สามารถบันทึกข้อมูลลงในเบราว์เซอร์ได้', 'error');
+            }
+        }
+
+        function updateNavBadge() {
+            const badge = document.getElementById('navTotalBadge');
+            if (badge) badge.textContent = surveyResponses.length;
+        }
+
+        // ---------------------------------------------------------------------
+        // 3. MODE SWITCHING & ADMIN AUTHENTICATION
+        // ---------------------------------------------------------------------
+        function requestAdminAccess() {
+            if (isAdminAuthenticated) {
+                switchMode('admin');
+            } else {
+                const modal = document.getElementById('adminLoginModal');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                    const pwdInput = document.getElementById('adminPasswordInput');
+                    if (pwdInput) {
+                        pwdInput.value = '';
+                        setTimeout(() => pwdInput.focus(), 50);
+                    }
+                }
+            }
+        }
+
+        function closeAdminLoginModal() {
+            const modal = document.getElementById('adminLoginModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function verifyAdminPassword(e) {
+            e.preventDefault();
+            const pwdInput = document.getElementById('adminPasswordInput');
+            const pwd = pwdInput ? pwdInput.value : '';
+            if (pwd === '@bangkhen') {
+                isAdminAuthenticated = true;
+                closeAdminLoginModal();
+                switchMode('admin');
+                showToast('เข้าสู่ระบบสำเร็จ', 'ยินดีต้อนรับเข้าสู่ระบบรายงานผลสำหรับเจ้าหน้าที่', 'success');
+            } else {
+                showToast('รหัสผ่านไม่ถูกต้อง', 'กรุณาลองใหม่อีกครั้ง', 'error');
+                if (pwdInput) {
+                    pwdInput.value = '';
+                    pwdInput.focus();
+                }
+            }
+        }
+
+        function switchMode(mode) {
+            const surveyView = document.getElementById('surveyView');
+            const adminView = document.getElementById('adminView');
+            const btnSurvey = document.getElementById('btnModeSurvey');
+            const btnAdmin = document.getElementById('btnModeAdmin');
+
+            if (mode === 'survey') {
+                surveyView.classList.remove('hidden');
+                adminView.classList.add('hidden');
+
+                if (btnSurvey) btnSurvey.className = 'flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all bg-gold-500 text-land-900 shadow';
+                if (btnAdmin) btnAdmin.className = 'flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all text-land-100 hover:text-white';
+            } else {
+                if (!isAdminAuthenticated) {
+                    requestAdminAccess();
+                    return;
+                }
+                surveyView.classList.add('hidden');
+                adminView.classList.remove('hidden');
+
+                if (btnAdmin) btnAdmin.className = 'flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all bg-gold-500 text-land-900 shadow';
+                if (btnSurvey) btnSurvey.className = 'flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all text-land-100 hover:text-white';
+
+                populateFilterDropdowns();
+                renderDashboard();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ---------------------------------------------------------------------
+        // 4. CITIZEN SURVEY RENDERING & INTERACTION
+        // ---------------------------------------------------------------------
+        function renderCounterDropdowns() {
+            const deptSelect = document.getElementById('departmentSelect');
+            const counterContainer = document.getElementById('counterSelectionContainer');
+            const counterSelect = document.getElementById('counterSelect');
+
+            if (!deptSelect || !counterContainer || !counterSelect) return;
+
+            selectedDepartment = deptSelect.value;
+            if (selectedDepartment) {
+                counterContainer.classList.remove('hidden');
+                counterSelect.innerHTML = '<option value="">-- กรุณาเลือกช่องบริการ --</option>';
+
+                let start = 1, end = 14;
+                if (selectedDepartment === 'ฝ่ายรังวัด') { start = 15; end = 15; }
+                else if (selectedDepartment === 'ฝ่ายการเงิน') { start = 16; end = 16; }
+                else if (selectedDepartment === 'ฝ่ายอำนวยการ') { start = 17; end = 17; }
+                else if (selectedDepartment === 'ฝ่ายทะเบียน') { start = 1; end = 14; }
+
+                for (let i = start; i <= end; i++) {
+                    const opt = document.createElement('option');
+                    opt.value = i;
+                    opt.textContent = `ช่องบริการที่ ${i} (${selectedDepartment})`;
+                    if (selectedCounter === i) opt.selected = true;
+                    counterSelect.appendChild(opt);
+                }
+                if (selectedCounter && (selectedCounter < start || selectedCounter > end)) {
+                    selectedCounter = null;
+                    counterSelect.value = "";
+                }
+            } else {
+                counterContainer.classList.add('hidden');
+                selectedCounter = null;
+            }
+            updateSubmitButtonState();
+        }
+
+        function onDepartmentChange() {
+            selectedCounter = null;
+            renderCounterDropdowns();
+            updateSummaryDisplay();
+        }
+
+        function onCounterChange() {
+            const counterSelect = document.getElementById('counterSelect');
+            if (counterSelect) {
+                selectedCounter = counterSelect.value ? parseInt(counterSelect.value, 10) : null;
+            }
+            updateSubmitButtonState();
+            updateSummaryDisplay();
+        }
+
+        function selectScore(score) {
+            selectedScore = score;
+            const buttons = document.querySelectorAll('.score-btn');
+            buttons.forEach(btn => {
+                const s = parseInt(btn.getAttribute('data-score'), 10);
+                if (s === score) {
+                    btn.classList.add('ring-4', 'ring-gold-400', 'scale-105', 'bg-gold-50', 'border-gold-500');
+                } else {
+                    btn.classList.remove('ring-4', 'ring-gold-400', 'scale-105', 'bg-gold-50', 'border-gold-500');
+                }
+            });
+            updateSubmitButtonState();
+        }
+
+        function updateSubmitButtonState() {
+            const submitBtn = document.getElementById('submitSurveyBtn');
+            if (!submitBtn) return;
+            if (selectedDepartment && selectedCounter && selectedScore !== null) {
+                submitBtn.disabled = false;
+                submitBtn.className = 'w-full py-4 px-6 bg-gradient-to-r from-land-700 to-land-900 hover:from-land-800 hover:to-black text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 cursor-pointer';
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.className = 'w-full py-4 px-6 bg-slate-300 text-slate-500 font-bold rounded-xl cursor-not-allowed shadow-inner';
+            }
+        }
+
+        function updateSummaryDisplay() {
+            const summaryBox = document.getElementById('selectedSummaryBox');
+            const summaryText = document.getElementById('selectedSummaryText');
+            if (!summaryBox || !summaryText) return;
+
+            if (selectedDepartment && selectedCounter) {
+                summaryBox.classList.remove('hidden');
+                summaryText.textContent = `${selectedDepartment} > ช่องบริการที่ ${selectedCounter}`;
+            } else {
+                summaryBox.classList.add('hidden');
+            }
+        }
+
+        function submitSurvey(e) {
+            e.preventDefault();
+            if (!selectedDepartment || !selectedCounter || selectedScore === null) {
+                showToast('ข้อมูลไม่ครบถ้วน', 'กรุณาเลือกฝ่ายงาน ช่องบริการ และระดับความพึงพอใจ', 'error');
+                return;
+            }
+
+            const dateInput = document.getElementById('surveyDate');
+            const surveyDate = dateInput && dateInput.value ? dateInput.value : new Date().toISOString().split('T')[0];
+            const suggestionInput = document.getElementById('surveySuggestion');
+            const suggestion = suggestionInput ? suggestionInput.value.trim() : '';
+
+            const newRecord = {
+                id: 'SURV-' + Date.now().toString().slice(-6),
+                timestamp: new Date().toISOString(),
+                date: surveyDate,
+                department: selectedDepartment,
+                counter: selectedCounter,
+                score: selectedScore,
+                suggestion: suggestion
+            };
+
+            surveyResponses.unshift(newRecord);
+            saveResponsesToStorage();
+
+            if (googleScriptUrl) {
+                syncToGoogleSheets(newRecord);
+            }
+
+            showSuccessModal(newRecord);
+            resetSurveyForm();
+        }
+
+        function resetSurveyForm() {
+            selectedDepartment = null;
+            selectedCounter = null;
+            selectedScore = null;
+
+            const deptSelect = document.getElementById('departmentSelect');
+            if (deptSelect) deptSelect.value = '';
+
+            const counterContainer = document.getElementById('counterSelectionContainer');
+            if (counterContainer) counterContainer.classList.add('hidden');
+
+            const buttons = document.querySelectorAll('.score-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('ring-4', 'ring-gold-400', 'scale-105', 'bg-gold-50', 'border-gold-500');
+            });
+
+            const suggestionInput = document.getElementById('surveySuggestion');
+            if (suggestionInput) suggestionInput.value = '';
+
+            setDefaultDate();
+            updateSubmitButtonState();
+            updateSummaryDisplay();
+        }
+
+        function showSuccessModal(record) {
+            const modal = document.getElementById('successModal');
+            const text = document.getElementById('successModalText');
+            if (text) {
+                let scoreText = '';
+                if (record.score === 5) scoreText = 'พอใจมากที่สุด';
+                else if (record.score === 4) scoreText = 'พอใจมาก';
+                else if (record.score === 3) scoreText = 'พอใจปานกลาง';
+                else if (record.score === 2) scoreText = 'พอใจน้อย';
+                else if (record.score === 1) scoreText = 'พอใจน้อยที่สุด';
+
+                text.innerHTML = `บันทึกข้อมูลเรียบร้อยแล้ว<br><span class="font-semibold text-land-700">${record.department} (ช่อง ${record.counter})</span><br>ระดับความพึงพอใจ: <span class="text-gold-600 font-bold">${scoreText}</span>`;
+            }
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        }
+
+        function closeSuccessModal() {
+            const modal = document.getElementById('successModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        // ---------------------------------------------------------------------
+        // 5. GOOGLE SHEETS & ADMIN SYNC
+        // ---------------------------------------------------------------------
+        function saveGoogleScriptUrl() {
+            const input = document.getElementById('googleScriptUrlInput');
+            if (!input) return;
+            googleScriptUrl = input.value.trim() || DEFAULT_GOOGLE_SCRIPT_URL;
+            input.value = googleScriptUrl;
+            localStorage.setItem('bangkhen_google_script_url', googleScriptUrl);
+            showToast('บันทึกสำเร็จ', 'ตั้งค่า URL ของ Google Apps Script เรียบร้อยแล้ว', 'success');
+            if (googleScriptUrl) {
+                fetchFromGoogleSheets();
+            }
+        }
+
+        function syncToGoogleSheets(record) {
+            if (!googleScriptUrl) return;
+            fetch(googleScriptUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(record)
+            }).catch(err => {
+                console.error('Google Sheets Sync Error:', err);
+            });
+        }
+
+        async function fetchFromGoogleSheets(silent = false) {
+            if (!googleScriptUrl) {
+                if (!silent) showToast('ยังไม่ได้เชื่อมต่อ', 'กรุณาระบุ Google Apps Script Web App URL ก่อนดึงข้อมูล', 'error');
+                return;
+            }
+            if (!silent) showToast('กำลังซิงก์ข้อมูล...', 'กำลังดึงข้อมูลล่าสุดจาก Google Sheets', 'success');
+            try {
+                const response = await fetch(googleScriptUrl);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const cloudData = await response.json();
+                if (Array.isArray(cloudData)) {
+                    // Merge local and cloud data without duplicates based on ID
+                    const map = new Map();
+                    surveyResponses.forEach(item => map.set(item.id, item));
+                    cloudData.forEach(item => {
+                        if (item && item.id) map.set(item.id, item);
+                    });
+                    surveyResponses = Array.from(map.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    saveResponsesToStorage();
+                    if (isAdminAuthenticated) renderDashboard();
+                    if (!silent) showToast('ซิงก์ข้อมูลสำเร็จ', `อัปเดตข้อมูลทั้งหมด ${surveyResponses.length} รายการเรียบร้อยแล้ว`, 'success');
+                }
+            } catch (error) {
+                console.error('Fetch Google Sheets Error:', error);
+                if (!silent) showToast('ไม่สามารถดึงข้อมูลได้', 'กรุณาตรวจสอบสิทธิ์การเข้าถึง Web App เป็น "ทุกคน (Anyone)"', 'error');
+            }
+        }
+
+        function syncToGoogleSheets(record) {
+            if (!googleScriptUrl) return;
+            fetch(googleScriptUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(record)
+            }).catch(err => {
+                console.warn('Google Sheets Sync Warning:', err.message);
+            });
+        }
+
+        async function fetchFromGoogleSheets(silent = false) {
+            if (!googleScriptUrl) {
+                if (!silent) showToast('ยังไม่ได้เชื่อมต่อ', 'กรุณาระบุ Google Apps Script Web App URL ก่อนดึงข้อมูล', 'error');
+                return;
+            }
+            if (!silent) showToast('กำลังซิงก์ข้อมูล...', 'กำลังดึงข้อมูลล่าสุดจาก Google Sheets', 'success');
+            try {
+                // Append timestamp to prevent caching and follow redirects cleanly
+                const separator = googleScriptUrl.includes('?') ? '&' : '?';
+                const fetchUrl = `${googleScriptUrl}${separator}t=${Date.now()}`;
+                
+                const response = await fetch(fetchUrl, {
+                    method: 'GET',
+                    redirect: 'follow'
+                });
+                
+                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+                const cloudData = await response.json();
+                
+                if (Array.isArray(cloudData)) {
+                    // Merge local and cloud data without duplicates based on ID
+                    const map = new Map();
+                    surveyResponses.forEach(item => map.set(item.id, item));
+                    cloudData.forEach(item => {
+                        if (item && item.id) map.set(item.id, item);
+                    });
+                    surveyResponses = Array.from(map.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    saveResponsesToStorage();
+                    if (isAdminAuthenticated) renderDashboard();
+                    if (!silent) showToast('ซิงก์ข้อมูลสำเร็จ', `อัปเดตข้อมูลทั้งหมด ${surveyResponses.length} รายการเรียบร้อยแล้ว`, 'success');
+                }
+            } catch (error) {
+                console.warn('Google Sheets Fetch Info (CORS/Network):', error.message);
+                if (!silent) {
+                    showToast(
+                        'ไม่สามารถดึงข้อมูลจาก Cloud ได้',
+                        'โปรดตรวจสอบว่าใน Apps Script ตั้งค่าผู้มีสิทธิ์เข้าถึงเป็น "ทุกคน (Anyone)" และ Deploy เวอร์ชันใหม่แล้ว',
+                        'error'
+                    );
+                }
+            }
+        }
+
+        function openAppsScriptGuideModal() {
+            const modal = document.getElementById('appsScriptGuideModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        }
+
+        function closeAppsScriptGuideModal() {
+            const modal = document.getElementById('appsScriptGuideModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function copyAppsScriptCode() {
+            const codeEl = document.getElementById('appsScriptCodeBlock');
+            if (!codeEl) return;
+            const textarea = document.createElement('textarea');
+            textarea.value = codeEl.textContent;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast('คัดลอกโค้ดแล้ว', 'นำไปวางใน Google Apps Script ได้ทันที', 'success');
+        }
+
+        // ---------------------------------------------------------------------
+        // 6. ADMIN DASHBOARD & ANALYTICS
+        // ---------------------------------------------------------------------
+        function populateFilterDropdowns() {
+            const filterDept = document.getElementById('filterDept');
+            const filterCounter = document.getElementById('filterCounter');
+            if (!filterDept || !filterCounter) return;
+
+            const currentDept = filterDept.value;
+            const currentCounter = filterCounter.value;
+
+            filterDept.innerHTML = '<option value="">ทุกฝ่ายงาน</option>';
+            DEPARTMENTS.forEach(dept => {
+                const opt = document.createElement('option');
+                opt.value = dept.name;
+                opt.textContent = dept.name;
+                if (currentDept === dept.name) opt.selected = true;
+                filterDept.appendChild(opt);
+            });
+
+            filterCounter.innerHTML = '<option value="">ทุกช่องบริการ</option>';
+            for (let i = 1; i <= TOTAL_COUNTERS; i++) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = `ช่องบริการที่ ${i}`;
+                if (currentCounter === String(i)) opt.selected = true;
+                filterCounter.appendChild(opt);
+            }
+        }
+
+        function renderDashboard() {
+            const filterDept = document.getElementById('filterDept');
+            const filterCounter = document.getElementById('filterCounter');
+            const filterScore = document.getElementById('filterScore');
+            const filterDateFrom = document.getElementById('filterDateFrom');
+            const filterDateTo = document.getElementById('filterDateTo');
+
+            const deptVal = filterDept ? filterDept.value : '';
+            const counterVal = filterCounter ? filterCounter.value : '';
+            const scoreVal = filterScore ? filterScore.value : '';
+            const dateFromVal = filterDateFrom ? filterDateFrom.value : '';
+            const dateToVal = filterDateTo ? filterDateTo.value : '';
+
+            let filtered = surveyResponses.filter(item => {
+                if (deptVal && item.department !== deptVal) return false;
+                if (counterVal && String(item.counter) !== counterVal) return false;
+                if (scoreVal && String(item.score) !== scoreVal) return false;
+                if (dateFromVal && item.date < dateFromVal) return false;
+                if (dateToVal && item.date > dateToVal) return false;
+                return true;
+            });
+
+            // Summary Metrics
+            const totalCount = filtered.length;
+            const totalBadge = document.getElementById('statTotalCount');
+            if (totalBadge) totalBadge.textContent = totalCount.toLocaleString();
+
+            let sumScore = 0;
+            let score5Count = 0;
+            filtered.forEach(item => {
+                sumScore += item.score;
+                if (item.score === 5) score5Count++;
+            });
+
+            const avgScore = totalCount > 0 ? (sumScore / totalCount).toFixed(2) : '0.00';
+            const avgBadge = document.getElementById('statAvgScore');
+            if (avgBadge) avgBadge.textContent = avgScore;
+
+            const pct5 = totalCount > 0 ? Math.round((score5Count / totalCount) * 100) : 0;
+            const pctBadge = document.getElementById('statSatisfactionPct');
+            if (pctBadge) pctBadge.textContent = pct5 + '%';
+
+            // Department Cards
+            const deptCardsContainer = document.getElementById('deptCardsContainer');
+            if (deptCardsContainer) {
+                deptCardsContainer.innerHTML = DEPARTMENTS.map(dept => {
+                    const deptItems = filtered.filter(i => i.department === dept.name);
+                    const count = deptItems.length;
+                    let dSum = 0;
+                    deptItems.forEach(i => dSum += i.score);
+                    const dAvg = count > 0 ? (dSum / count).toFixed(2) : '0.00';
+                    return `
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                            <h4 class="font-bold text-slate-800 text-sm mb-1">${dept.name}</h4>
+                            <p class="text-xs text-slate-500 mb-3">${dept.range}</p>
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <span class="text-2xl font-bold text-land-800">${count}</span>
+                                    <span class="text-xs text-slate-400 ml-1">รายการ</span>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-sm font-semibold text-gold-600">${dAvg}</span>
+                                    <span class="text-xs text-slate-400 block">คะแนนเฉลี่ย</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            renderCharts(filtered);
+            renderTable(filtered);
+            renderSuggestionsList(filtered);
+        }
+
+        function resetFilters() {
+            const filterDept = document.getElementById('filterDept');
+            const filterCounter = document.getElementById('filterCounter');
+            const filterScore = document.getElementById('filterScore');
+            const filterDateFrom = document.getElementById('filterDateFrom');
+            const filterDateTo = document.getElementById('filterDateTo');
+
+            if (filterDept) filterDept.value = '';
+            if (filterCounter) filterCounter.value = '';
+            if (filterScore) filterScore.value = '';
+            if (filterDateFrom) filterDateFrom.value = '';
+            if (filterDateTo) filterDateTo.value = '';
+
+            renderDashboard();
+        }
+
+        function renderCharts(filtered) {
+            // Satisfaction Level Chart
+            const ctxSatisfaction = document.getElementById('satisfactionChart');
+            if (ctxSatisfaction) {
+                const counts = [0, 0, 0, 0, 0];
+                filtered.forEach(item => {
+                    if (item.score >= 1 && item.score <= 5) {
+                        counts[item.score - 1]++;
+                    }
+                });
+
+                if (satisfactionChartInstance) {
+                    satisfactionChartInstance.destroy();
+                }
+
+                satisfactionChartInstance = new Chart(ctxSatisfaction, {
+                    type: 'bar',
+                    data: {
+                        labels: ['พอใจน้อยที่สุด (1)', 'พอใจน้อย (2)', 'พอใจปานกลาง (3)', 'พอใจมาก (4)', 'พอใจมากที่สุด (5)'],
+                        datasets: [{
+                            label: 'จำนวนผู้ตอบ',
+                            data: counts,
+                            backgroundColor: ['#ef4444', '#f97316', '#eab308', '#3b82f6', '#10b981'],
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+                    }
+                });
+            }
+
+            // Counter Performance Chart
+            const ctxCounter = document.getElementById('counterChart');
+            if (ctxCounter) {
+                const counterScores = Array(TOTAL_COUNTERS).fill(0);
+                const counterCounts = Array(TOTAL_COUNTERS).fill(0);
+
+                filtered.forEach(item => {
+                    const idx = item.counter - 1;
+                    if (idx >= 0 && idx < TOTAL_COUNTERS) {
+                        counterScores[idx] += item.score;
+                        counterCounts[idx]++;
+                    }
+                });
+
+                const counterAvgs = counterScores.map((sum, i) => counterCounts[i] > 0 ? Number((sum / counterCounts[i]).toFixed(2)) : 0);
+                const counterLabels = Array.from({length: TOTAL_COUNTERS}, (_, i) => `ช่อง ${i+1}`);
+
+                if (counterChartInstance) {
+                    counterChartInstance.destroy();
+                }
+
+                counterChartInstance = new Chart(ctxCounter, {
+                    type: 'bar',
+                    data: {
+                        labels: counterLabels,
+                        datasets: [{
+                            label: 'คะแนนเฉลี่ย',
+                            data: counterAvgs,
+                            backgroundColor: '#0f4c3a',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true, max: 5, ticks: { precision: 1 } } }
+                    }
+                });
+            }
+        }
+
+        function renderTable(filtered) {
+            const tbody = document.getElementById('surveyTableBody');
+            const countSpan = document.getElementById('tableRecordCount');
+            if (!tbody || !countSpan) return;
+
+            countSpan.textContent = filtered.length;
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-8 text-center text-slate-400">ไม่พบข้อมูลการประเมินตามเงื่อนไขที่เลือก</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map((item, index) => {
+                let scoreBadge = '';
+                if (item.score === 5) scoreBadge = '<span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-semibold">😄 พอใจมากที่สุด (5)</span>';
+                else if (item.score === 4) scoreBadge = '<span class="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold">🙂 พอใจมาก (4)</span>';
+                else if (item.score === 3) scoreBadge = '<span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-semibold">😐 พอใจปานกลาง (3)</span>';
+                else if (item.score === 2) scoreBadge = '<span class="px-2.5 py-1 bg-orange-100 text-orange-800 rounded-full text-xs font-semibold">🙁 พอใจน้อย (2)</span>';
+                else if (item.score === 1) scoreBadge = '<span class="px-2.5 py-1 bg-red-100 text-red-800 rounded-full text-xs font-semibold">😡 พอใจน้อยที่สุด (1)</span>';
+
+                return `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-500">${index + 1}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-700">${item.date}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-xs font-medium text-slate-800">${item.department}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-700 text-center font-bold">ช่อง ${item.counter}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">${scoreBadge}</td>
+                        <td class="px-6 py-4 text-xs text-slate-600 max-w-xs truncate">${item.suggestion ? escapeHtml(item.suggestion) : '<span class="text-slate-300">- ไม่มี -</span>'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-xs no-print">
+                            <button onclick="deleteRecord('${item.id}')" class="text-red-500 hover:text-red-700 p-1"><i class="fa-solid fa-trash-can"></i></button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderSuggestionsList(filtered) {
+            const container = document.getElementById('suggestionsContainer');
+            if (!container) return;
+
+            const withSuggestions = filtered.filter(item => item.suggestion && item.suggestion.trim() !== '');
+
+            if (withSuggestions.length === 0) {
+                container.innerHTML = `<div class="p-6 text-center text-slate-400 text-xs">ยังไม่มีข้อเสนอแนะเพิ่มเติมในขณะนี้</div>`;
+                return;
+            }
+
+            container.innerHTML = withSuggestions.map(item => `
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-bold text-land-800">${item.department} (ช่อง ${item.counter})</span>
+                        <span class="text-[10px] text-slate-400">${item.date}</span>
+                    </div>
+                    <p class="text-xs text-slate-700">${escapeHtml(item.suggestion)}</p>
+                </div>
+            `).join('');
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        function deleteRecord(id) {
+            surveyResponses = surveyResponses.filter(item => item.id !== id);
+            saveResponsesToStorage();
+            renderDashboard();
+            showToast('ลบรายการสำเร็จ', 'ระบบได้ลบข้อมูลการประเมินออกแล้ว', 'success');
+        }
+
+        function confirmClearAllData() {
+            const modal = document.getElementById('clearDataConfirmModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        }
+
+        function closeClearDataModal() {
+            const modal = document.getElementById('clearDataConfirmModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function executeClearAllData() {
+            surveyResponses = [];
+            saveResponsesToStorage();
+            renderDashboard();
+            closeClearDataModal();
+            showToast('ล้างข้อมูลสำเร็จ', 'ข้อมูลการประเมินทั้งหมดถูกล้างเรียบร้อยแล้ว', 'success');
+        }
+
+        // ---------------------------------------------------------------------
+        // 7. EXPORT & PRINT & QR GENERATOR
+        // ---------------------------------------------------------------------
+        function exportToCSV() {
+            if (surveyResponses.length === 0) {
+                showToast('ไม่มีข้อมูล', 'ยังไม่มีข้อมูลการประเมินสำหรับส่งออก', 'error');
+                return;
+            }
+
+            let csvContent = "\uFEFFID,วันที่,ฝ่ายงาน,ช่องบริการ,คะแนน,ระดับความพึงพอใจ,ข้อเสนอแนะ\n";
+            surveyResponses.forEach(item => {
+                let scoreText = '';
+                if (item.score === 5) scoreText = 'พอใจมากที่สุด';
+                else if (item.score === 4) scoreText = 'พอใจมาก';
+                else if (item.score === 3) scoreText = 'พอใจปานกลาง';
+                else if (item.score === 2) scoreText = 'พอใจน้อย';
+                else if (item.score === 1) scoreText = 'พอใจน้อยที่สุด';
+
+                const escapedSuggestion = `"${(item.suggestion || '').replace(/"/g, '""')}"`;
+                csvContent += `${item.id},${item.date},${item.department},${item.counter},${item.score},${scoreText},${escapedSuggestion}\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', `bangkhen_land_survey_report_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast('ส่งออกสำเร็จ', 'ดาวน์โหลดไฟล์รายงาน CSV เรียบร้อยแล้ว', 'success');
+        }
+
+        function printReport() {
+            window.print();
+        }
+
+        function updateQrGenerator() {
+            const select = document.getElementById('qrCounterSelect');
+            const container = document.getElementById('qrCodeContainer');
+            const titleEl = document.getElementById('qrCounterTitle');
+            if (!select || !container || !titleEl) return;
+
+            const val = select.value;
+            if (!val) {
+                container.innerHTML = '<div class="text-slate-400 text-xs py-8 px-4">กรุณาเลือกช่องบริการ<br>เพื่อสร้าง QR Code</div>';
+                titleEl.textContent = 'เลือกช่องบริการ';
+                return;
+            }
+
+            const counterNum = parseInt(val, 10);
+            let deptName = 'ฝ่ายทะเบียน';
+            if (counterNum >= 1 && counterNum <= 14) deptName = 'ฝ่ายทะเบียน';
+            else if (counterNum === 15) deptName = 'ฝ่ายรังวัด';
+            else if (counterNum === 16) deptName = 'ฝ่ายการเงิน';
+            else if (counterNum === 17) deptName = 'ฝ่ายอำนวยการ';
+
+            titleEl.textContent = `${deptName} - ช่องบริการที่ ${counterNum}`;
+
+            const currentUrl = window.location.href.split('?')[0];
+            const targetUrl = `${currentUrl}?counter=${counterNum}`;
+
+            container.innerHTML = '';
+            new QRCode(container, {
+                text: targetUrl,
+                width: 170,
+                height: 170,
+                colorDark: '#0f4c3a',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        function downloadQrCode() {
+            const container = document.getElementById('qrCodeContainer');
+            const canvas = container ? container.querySelector('canvas') : null;
+            if (!canvas) {
+                showToast('ไม่พบ QR Code', 'กรุณาเลือกช่องบริการก่อนดาวน์โหลด', 'error');
+                return;
+            }
+
+            const select = document.getElementById('qrCounterSelect');
+            const counterNum = select ? select.value : '1';
+
+            const url = canvas.toDataURL('image/png');
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `QRCode_Counter_${counterNum}_Bangkhen.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast('ดาวน์โหลดสำเร็จ', `บันทึกป้าย QR Code ช่องที่ ${counterNum} เรียบร้อยแล้ว`, 'success');
+        }
+
+        // ---------------------------------------------------------------------
+        // 8. TOAST NOTIFICATION
+        // ---------------------------------------------------------------------
+        function showToast(title, message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            let borderCol = 'border-emerald-500';
+            let icon = 'fa-circle-check text-emerald-500';
+            if (type === 'error') {
+                borderCol = 'border-red-500';
+                icon = 'fa-circle-exclamation text-red-500';
+            }
+
+            toast.className = `flex items-start gap-3 bg-white border-l-4 ${borderCol} p-4 rounded-xl shadow-xl pointer-events-auto transform translate-y-2 opacity-0 transition-all duration-300 max-w-sm`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icon} text-lg mt-0.5"></i>
+                <div class="flex-1">
+                    <h5 class="font-bold text-xs text-slate-800">${title}</h5>
+                    <p class="text-[11px] text-slate-600 mt-0.5">${message}</p>
+                </div>
+                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xs"></i></button>
+            `;
+
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
