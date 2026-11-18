@@ -123,7 +123,7 @@
                 <input type="date" id="surveyDate" required class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-land-700 focus:border-land-700 outline-none transition-all bg-slate-50">
             </div>
 
-            <!-- Question 1: Department, Service Counter & Surveyor -->
+            <!-- Question 1: Department, Service Counter & Surveyor/Officer -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
                 <div>
                     <h3 class="text-sm sm:text-base font-bold text-slate-800 mb-1">
@@ -138,9 +138,9 @@
                     <select id="departmentSelect" onchange="onDepartmentChange()" required class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-land-700 focus:border-land-700 outline-none bg-white font-medium text-slate-800">
                         <option value="">-- กรุณาเลือกฝ่ายงาน --</option>
                         <option value="ฝ่ายทะเบียน">ฝ่ายทะเบียน (ช่องบริการที่ 1 - 14)</option>
-                        <option value="ฝ่ายรังวัด">ฝ่ายรังวัด (ช่องบริการที่ 15)</option>
-                        <option value="ฝ่ายการเงิน">ฝ่ายการเงิน (ช่องบริการที่ 16)</option>
-                        <option value="ฝ่ายอำนวยการ">ฝ่ายอำนวยการ (ช่องบริการที่ 17)</option>
+                        <option value="ฝ่ายรังวัด">ฝ่ายรังวัด (ช่องบริการที่ 15 - 16)</option>
+                        <option value="ฝ่ายการเงิน">ฝ่ายการเงิน (ช่องบริการที่ 17)</option>
+                        <option value="ฝ่ายอำนวยการ">ฝ่ายอำนวยการ (ช่องบริการที่ 18)</option>
                     </select>
                 </div>
 
@@ -152,18 +152,13 @@
                     </select>
                 </div>
 
-                <!-- Step 3: Select Surveyor (Only for Survey Department / Counter 15) -->
+                <!-- Step 3: Select Officer/Surveyor (Only for Counter 15 and 16) -->
                 <div id="surveyorSelectionContainer" class="hidden pt-2 border-t border-slate-100">
                     <label for="surveyorSelect" class="block text-xs font-semibold text-slate-700 mb-1.5">
-                        ขั้นตอนที่ 3: เลือกช่างรังวัดที่ให้บริการ <span class="text-red-500">*</span>
+                        ขั้นตอนที่ 3: เลือกเจ้าหน้าที่ผู้ให้บริการ <span class="text-red-500">*</span>
                     </label>
                     <select id="surveyorSelect" onchange="onSurveyorChange()" class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-land-700 focus:border-land-700 outline-none bg-white font-medium text-slate-800">
-                        <option value="">-- กรุณาเลือกชื่อช่างรังวัด --</option>
-                        <option value="นายอภิเดช พงษ์พันธุ์">1. นายอภิเดช พงษ์พันธุ์</option>
-                        <option value="นางธัญพร นิลสุวรรณ์">2. นางธัญพร นิลสุวรรณ์</option>
-                        <option value="นายนราธิป มัดทะปะนัง">3. นายนราธิป มัดทะปะนัง</option>
-                        <option value="นางสาวไอลดา จันทร์จำรุญ">4. นางสาวไอลดา จันทร์จำรุญ</option>
-                        <option value="นายครรชิต คำทะเนตร">5. นายครรชิต คำทะเนตร</option>
+                        <option value="">-- กรุณาเลือกชื่อเจ้าหน้าที่ --</option>
                     </select>
                 </div>
 
@@ -295,7 +290,7 @@
                     <select id="filterCounter" onchange="renderDashboard()" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-slate-50 outline-none"></select>
                 </div>
                 <div>
-                    <label class="block text-[11px] font-medium text-slate-500 mb-1">ช่างรังวัด (ช่อง 15)</label>
+                    <label class="block text-[11px] font-medium text-slate-500 mb-1">เจ้าหน้าที่ (ช่อง 15-16)</label>
                     <select id="filterSurveyor" onchange="renderDashboard()" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-slate-50 outline-none"></select>
                 </div>
                 <div>
@@ -375,7 +370,7 @@
             </div>
 
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h3 class="text-sm font-bold text-slate-800 mb-4">คะแนนเฉลี่ยรายช่องบริการ (ช่องที่ 1 - 17)</h3>
+                <h3 class="text-sm font-bold text-slate-800 mb-4">คะแนนเฉลี่ยรายช่องบริการ (ช่องที่ 1 - 18)</h3>
                 <div class="h-64">
                     <canvas id="counterChart"></canvas>
                 </div>
@@ -426,7 +421,7 @@
                         </div>
                     </div>
                     <select id="qrCounterSelect" onchange="updateQrGenerator()" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-xs bg-slate-50 outline-none">
-                        <option value="">-- เลือกช่องบริการ (1 - 17) --</option>
+                        <option value="">-- เลือกช่องบริการ (1 - 18) --</option>
                         <optgroup label="ฝ่ายทะเบียน (ช่อง 1 - 14)">
                             <option value="1">ช่องบริการที่ 1</option>
                             <option value="2">ช่องบริการที่ 2</option>
@@ -443,14 +438,15 @@
                             <option value="13">ช่องบริการที่ 13</option>
                             <option value="14">ช่องบริการที่ 14</option>
                         </optgroup>
-                        <optgroup label="ฝ่ายรังวัด">
+                        <optgroup label="ฝ่ายรังวัด (ช่อง 15 - 16)">
                             <option value="15">ช่องบริการที่ 15 (ฝ่ายรังวัด)</option>
+                            <option value="16">ช่องบริการที่ 16 (ฝ่ายรังวัด)</option>
                         </optgroup>
                         <optgroup label="ฝ่ายการเงิน">
-                            <option value="16">ช่องบริการที่ 16 (ฝ่ายการเงิน)</option>
+                            <option value="17">ช่องบริการที่ 17 (ฝ่ายการเงิน)</option>
                         </optgroup>
                         <optgroup label="ฝ่ายอำนวยการ">
-                            <option value="17">ช่องบริการที่ 17 (ฝ่ายอำนวยการ)</option>
+                            <option value="18">ช่องบริการที่ 18 (ฝ่ายอำนวยการ)</option>
                         </optgroup>
                     </select>
                     <button onclick="downloadQrCode()" class="w-full py-2.5 bg-gold-500 hover:bg-gold-600 text-land-900 text-xs font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
@@ -494,7 +490,7 @@
                                 <th class="px-5 py-3">วันที่</th>
                                 <th class="px-5 py-3">ฝ่ายงาน</th>
                                 <th class="px-5 py-3 text-center">ช่องบริการ</th>
-                                <th class="px-5 py-3">ช่างรังวัด</th>
+                                <th class="px-5 py-3">เจ้าหน้าที่</th>
                                 <th class="px-5 py-3">ความพึงพอใจ</th>
                                 <th class="px-5 py-3">ข้อเสนอแนะ</th>
                                 <th class="px-5 py-3 text-right no-print">จัดการ</th>
@@ -642,22 +638,30 @@ function doGet(e) {
         // ---------------------------------------------------------------------
         // 1. CONSTANTS & CONFIGURATION
         // ---------------------------------------------------------------------
-        const STORAGE_KEY = 'bangkhen_land_survey_responses_v1';
+        const STORAGE_KEY = 'bangkhen_land_survey_responses_v2';
         const DEFAULT_GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwaELnzc0DHV7BKcZc5BJUAq-dROieHo_xVmrgh4hjiuB78pHaqsf0Be6dHVuxoioWF/exec';
-        const TOTAL_COUNTERS = 17;
+        const TOTAL_COUNTERS = 18;
         const DEPARTMENTS = [
             { name: 'ฝ่ายทะเบียน', range: 'ช่องบริการที่ 1 - 14' },
-            { name: 'ฝ่ายรังวัด', range: 'ช่องบริการที่ 15' },
-            { name: 'ฝ่ายการเงิน', range: 'ช่องบริการที่ 16' },
-            { name: 'ฝ่ายอำนวยการ', range: 'ช่องบริการที่ 17' }
+            { name: 'ฝ่ายรังวัด', range: 'ช่องบริการที่ 15 - 16' },
+            { name: 'ฝ่ายการเงิน', range: 'ช่องบริการที่ 17' },
+            { name: 'ฝ่ายอำนวยการ', range: 'ช่องบริการที่ 18' }
         ];
-        const SURVEYORS = [
-            'นายอภิเดช พงษ์พันธุ์',
-            'นางธัญพร นิลสุวรรณ์',
-            'นายนราธิป มัดทะปะนัง',
-            'นางสาวไอลดา จันทร์จำรุญ',
-            'นายครรชิต คำทะเนตร'
-        ];
+        
+        // Counter specific staff mapping
+        const COUNTER_STAFF = {
+            15: [
+                'นายอภิเดช พงษ์พันธ์',
+                'นางธัญพร นิลสุวรรณ์',
+                'นายครรชิต คำทะเนตร',
+                'นางสาวไอลดา จันทร์จำรุญ',
+                'นายนราธิป มัดทะปะนัง'
+            ],
+            16: [
+                'นางสาวนัยนา สมศรี',
+                'นางสาวธยากร แหลมหลวง'
+            ]
+        };
 
         // Application State
         let selectedDepartment = null;
@@ -693,12 +697,12 @@ function doGet(e) {
             const counterParam = urlParams.get('counter');
             if (counterParam) {
                 const counterNum = parseInt(counterParam, 10);
-                if (counterNum >= 1 && counterNum <= 17) {
+                if (counterNum >= 1 && counterNum <= TOTAL_COUNTERS) {
                     selectedCounter = counterNum;
                     if (counterNum >= 1 && counterNum <= 14) selectedDepartment = 'ฝ่ายทะเบียน';
-                    else if (counterNum === 15) selectedDepartment = 'ฝ่ายรังวัด';
-                    else if (counterNum === 16) selectedDepartment = 'ฝ่ายการเงิน';
-                    else if (counterNum === 17) selectedDepartment = 'ฝ่ายอำนวยการ';
+                    else if (counterNum === 15 || counterNum === 16) selectedDepartment = 'ฝ่ายรังวัด';
+                    else if (counterNum === 17) selectedDepartment = 'ฝ่ายการเงิน';
+                    else if (counterNum === 18) selectedDepartment = 'ฝ่ายอำนวยการ';
 
                     const deptSelect = document.getElementById('departmentSelect');
                     if (deptSelect) deptSelect.value = selectedDepartment;
@@ -825,9 +829,9 @@ function doGet(e) {
                 counterSelect.innerHTML = '<option value="">-- กรุณาเลือกช่องบริการ --</option>';
 
                 let start = 1, end = 14;
-                if (selectedDepartment === 'ฝ่ายรังวัด') { start = 15; end = 15; }
-                else if (selectedDepartment === 'ฝ่ายการเงิน') { start = 16; end = 16; }
-                else if (selectedDepartment === 'ฝ่ายอำนวยการ') { start = 17; end = 17; }
+                if (selectedDepartment === 'ฝ่ายรังวัด') { start = 15; end = 16; }
+                else if (selectedDepartment === 'ฝ่ายการเงิน') { start = 17; end = 17; }
+                else if (selectedDepartment === 'ฝ่ายอำนวยการ') { start = 18; end = 18; }
                 else if (selectedDepartment === 'ฝ่ายทะเบียน') { start = 1; end = 14; }
 
                 for (let i = start; i <= end; i++) {
@@ -854,9 +858,20 @@ function doGet(e) {
             const surveyorSelect = document.getElementById('surveyorSelect');
             if (!surveyorContainer || !surveyorSelect) return;
 
-            if (selectedDepartment === 'ฝ่ายรังวัด' && selectedCounter === 15) {
+            if (selectedCounter === 15 || selectedCounter === 16) {
                 surveyorContainer.classList.remove('hidden');
                 surveyorSelect.setAttribute('required', 'required');
+                
+                // Populate staff options based on counter
+                const staffList = COUNTER_STAFF[selectedCounter] || [];
+                surveyorSelect.innerHTML = '<option value="">-- กรุณาเลือกชื่อเจ้าหน้าที่ --</option>';
+                staffList.forEach(name => {
+                    const opt = document.createElement('option');
+                    opt.value = name;
+                    opt.textContent = name;
+                    if (selectedSurveyor === name) opt.selected = true;
+                    surveyorSelect.appendChild(opt);
+                });
             } else {
                 surveyorContainer.classList.add('hidden');
                 surveyorSelect.removeAttribute('required');
@@ -877,6 +892,7 @@ function doGet(e) {
             if (counterSelect) {
                 selectedCounter = counterSelect.value ? parseInt(counterSelect.value, 10) : null;
             }
+            selectedSurveyor = '';
             updateSurveyorSectionVisibility();
             updateSubmitButtonState();
             updateSummaryDisplay();
@@ -907,9 +923,8 @@ function doGet(e) {
             const submitBtn = document.getElementById('submitSurveyBtn');
             if (!submitBtn) return;
 
-            const surveyorSelect = document.getElementById('surveyorSelect');
-            const currentSurveyor = surveyorSelect ? surveyorSelect.value : selectedSurveyor;
-            const isSurveyorValid = !(selectedDepartment === 'ฝ่ายรังวัด' && selectedCounter === 15) || (currentSurveyor !== '');
+            const isSurveyorRequired = (selectedCounter === 15 || selectedCounter === 16);
+            const isSurveyorValid = !isSurveyorRequired || (selectedSurveyor !== '');
 
             if (selectedDepartment && selectedCounter && isSurveyorValid && selectedScore !== null) {
                 submitBtn.disabled = false;
@@ -925,13 +940,10 @@ function doGet(e) {
             const summaryText = document.getElementById('selectedSummaryText');
             if (!summaryBox || !summaryText) return;
 
-            const surveyorSelect = document.getElementById('surveyorSelect');
-            const currentSurveyor = surveyorSelect ? surveyorSelect.value : selectedSurveyor;
-
             if (selectedDepartment && selectedCounter) {
                 summaryBox.classList.remove('hidden');
-                if (selectedDepartment === 'ฝ่ายรังวัด' && selectedCounter === 15 && currentSurveyor) {
-                    summaryText.textContent = `${selectedDepartment} > ช่องบริการที่ ${selectedCounter} (ช่างรังวัด: ${currentSurveyor})`;
+                if ((selectedCounter === 15 || selectedCounter === 16) && selectedSurveyor) {
+                    summaryText.textContent = `${selectedDepartment} > ช่องบริการที่ ${selectedCounter} (เจ้าหน้าที่: ${selectedSurveyor})`;
                 } else {
                     summaryText.textContent = `${selectedDepartment} > ช่องบริการที่ ${selectedCounter}`;
                 }
@@ -942,14 +954,9 @@ function doGet(e) {
 
         function submitSurvey(e) {
             e.preventDefault();
-            const isSurveyorRequired = (selectedDepartment === 'ฝ่ายรังวัด' && selectedCounter === 15);
-            
-            // ดึงค่าจาก select โดยตรงเพื่อความชัวร์ ป้องกันค่าว่าง
-            const surveyorSelect = document.getElementById('surveyorSelect');
-            const currentSurveyor = (isSurveyorRequired && surveyorSelect) ? surveyorSelect.value : '';
-
-            if (!selectedDepartment || !selectedCounter || (isSurveyorRequired && !currentSurveyor) || selectedScore === null) {
-                showToast('ข้อมูลไม่ครบถ้วน', isSurveyorRequired && !currentSurveyor ? 'กรุณาเลือกชื่อช่างรังวัดที่ให้บริการ' : 'กรุณาเลือกฝ่ายงาน ช่องบริการ และระดับความพึงพอใจ', 'error');
+            const isSurveyorRequired = (selectedCounter === 15 || selectedCounter === 16);
+            if (!selectedDepartment || !selectedCounter || (isSurveyorRequired && !selectedSurveyor) || selectedScore === null) {
+                showToast('ข้อมูลไม่ครบถ้วน', isSurveyorRequired && !selectedSurveyor ? 'กรุณาเลือกชื่อเจ้าหน้าที่ผู้ให้บริการ' : 'กรุณาเลือกฝ่ายงาน ช่องบริการ และระดับความพึงพอใจ', 'error');
                 return;
             }
 
@@ -964,7 +971,7 @@ function doGet(e) {
                 date: surveyDate,
                 department: selectedDepartment,
                 counter: selectedCounter,
-                surveyor: currentSurveyor,
+                surveyor: isSurveyorRequired ? selectedSurveyor : '',
                 score: selectedScore,
                 suggestion: suggestion
             };
@@ -1025,7 +1032,7 @@ function doGet(e) {
                 else if (record.score === 2) scoreText = 'พอใจน้อย';
                 else if (record.score === 1) scoreText = 'พอใจน้อยที่สุด';
 
-                const surveyorLine = record.surveyor ? `<br>ช่างรังวัด: <span class="font-semibold text-slate-800">${record.surveyor}</span>` : '';
+                const surveyorLine = record.surveyor ? `<br>เจ้าหน้าที่: <span class="font-semibold text-slate-800">${record.surveyor}</span>` : '';
                 text.innerHTML = `บันทึกข้อมูลเรียบร้อยแล้ว<br><span class="font-semibold text-land-700">${record.department} (ช่อง ${record.counter})</span>${surveyorLine}<br>ระดับความพึงพอใจ: <span class="text-gold-600 font-bold">${scoreText}</span>`;
             }
             if (modal) {
@@ -1176,8 +1183,9 @@ function doGet(e) {
             }
 
             if (filterSurveyor) {
-                filterSurveyor.innerHTML = '<option value="">ช่างรังวัดทั้งหมด</option>';
-                SURVEYORS.forEach(name => {
+                filterSurveyor.innerHTML = '<option value="">เจ้าหน้าที่ทั้งหมด</option>';
+                const allStaff = [...COUNTER_STAFF[15], ...COUNTER_STAFF[16]];
+                allStaff.forEach(name => {
                     const opt = document.createElement('option');
                     opt.value = name;
                     opt.textContent = name;
@@ -1463,7 +1471,7 @@ function doGet(e) {
                 return;
             }
 
-            let csvContent = "\uFEFFID,วันที่,ฝ่ายงาน,ช่องบริการ,ช่างรังวัด,คะแนน,ระดับความพึงพอใจ,ข้อเสนอแนะ\n";
+            let csvContent = "\uFEFFID,วันที่,ฝ่ายงาน,ช่องบริการ,เจ้าหน้าที่,คะแนน,ระดับความพึงพอใจ,ข้อเสนอแนะ\n";
             surveyResponses.forEach(item => {
                 let scoreText = '';
                 if (item.score === 5) scoreText = 'พอใจมากที่สุด';
@@ -1508,9 +1516,9 @@ function doGet(e) {
             const counterNum = parseInt(val, 10);
             let deptName = 'ฝ่ายทะเบียน';
             if (counterNum >= 1 && counterNum <= 14) deptName = 'ฝ่ายทะเบียน';
-            else if (counterNum === 15) deptName = 'ฝ่ายรังวัด';
-            else if (counterNum === 16) deptName = 'ฝ่ายการเงิน';
-            else if (counterNum === 17) deptName = 'ฝ่ายอำนวยการ';
+            else if (counterNum === 15 || counterNum === 16) deptName = 'ฝ่ายรังวัด';
+            else if (counterNum === 17) deptName = 'ฝ่ายการเงิน';
+            else if (counterNum === 18) deptName = 'ฝ่ายอำนวยการ';
 
             titleEl.textContent = `${deptName} - ช่องบริการที่ ${counterNum}`;
 
